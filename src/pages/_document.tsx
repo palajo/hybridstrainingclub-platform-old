@@ -4,26 +4,26 @@ import { createCache, StyleProvider } from '@ant-design/cssinjs';
 
 const MyDocument = () => (
   <Html lang="en">
-    <Head />
+    <Head/>
     <body>
-      <Main />
-      <NextScript />
+    <Main/>
+    <NextScript/>
     </body>
   </Html>
-)
+);
 
 MyDocument.getInitialProps = async (ctx: DocumentContext) => {
   const cache = createCache();
-  let fileName = "";
+  let fileName = '';
   const originalRenderPage = ctx.renderPage;
   ctx.renderPage = () =>
     originalRenderPage({
       enhanceApp: (App) => (props) =>
-      (
-        <StyleProvider cache={cache}>
-          <App {...props} />
-        </StyleProvider>
-      ),
+        (
+          <StyleProvider cache={cache}>
+            <App {...props} />
+          </StyleProvider>
+        ),
     });
 
   const initialProps = await Document.getInitialProps(ctx);
@@ -37,10 +37,10 @@ MyDocument.getInitialProps = async (ctx: DocumentContext) => {
       <>
         {initialProps.styles}
         {/* 1.2 inject css */}
-        {fileName && <link rel="stylesheet" href={`/${fileName}`} />}
+        {fileName && <link rel="stylesheet" href={`/${fileName}`}/>}
       </>
     ),
   };
-}
+};
 
 export default MyDocument;

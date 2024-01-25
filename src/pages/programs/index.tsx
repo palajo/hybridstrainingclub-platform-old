@@ -1,13 +1,10 @@
 import React from 'react';
-import RootLayout from '@/layouts/RootLayout';
-import { Button, Col, Input, Row, theme, Typography } from 'antd';
+import { Avatar, Button, Col, Input, List, Row, Space, theme, Typography } from 'antd';
 import type { SearchProps } from 'antd/es/input/Search';
+import { PlusOutlined } from '@ant-design/icons';
 
 const { Search } = Input;
 const { Title } = Typography;
-
-import { LikeOutlined, MessageOutlined, PlusOutlined, StarOutlined } from '@ant-design/icons';
-import { Avatar, List, Space } from 'antd';
 
 const data = Array.from({ length: 24 }).map((_, i) => ({
   href: 'https://ant.design',
@@ -37,68 +34,67 @@ const Programs: React.FC = () => {
   };
 
   return (
-    <RootLayout>
-      <Row gutter={[16, 24]}>
-        <Col span={24}>
-          <Row justify="space-between" align="middle">
-            <Col>
-              <Title level={2} style={{ marginBottom: 0 }}>
-                Programs
-              </Title>
-            </Col>
-            <Col>
-              <Row gutter={[12, 12]}>
-                <Col>
-                  <Search placeholder="Search.." allowClear onSearch={onSearch} style={{ width: 320 }} />
-                </Col>
-                <Col>
-                  <Button type="primary" icon={<PlusOutlined />}>Create program</Button>
-                </Col>
-              </Row>
-            </Col>
-          </Row>
-        </Col>
-        <Col span={24}>
-          <Row>
-            <Col span={24} style={{ padding: '16px 24px', background: colorBgContainer, borderRadius: borderRadiusLG }}>
-              <List
-                itemLayout="vertical"
-                size="large"
-                pagination={{
-                  onChange: (page) => {
-                    console.log(page);
-                  },
-                  align: 'center',
-                  pageSize: 4,
-                }}
-                dataSource={data}
-                renderItem={(item) => (
-                  <List.Item
-                    key={item.title}
-                    actions={[<Button type="primary" key="edit">Edit</Button>, <Button type="default" danger key="delete">Delete</Button>]}
-                    extra={
-                      <img
-                        width={480}
-                        alt="logo"
-                        src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"
-                      />
-                    }
-                    style={{ display: 'flex', alignItems: 'center' }}
-                  >
-                    <List.Item.Meta
-                      avatar={<Avatar size={56} src={item.avatar} />}
-                      title={<a href={item.href}>{item.title}</a>}
-                      description={item.description}
+    <Row gutter={[16, 24]}>
+      <Col span={24}>
+        <Row justify="space-between" align="middle">
+          <Col>
+            <Title level={2} style={{ marginBottom: 0 }}>
+              Programs
+            </Title>
+          </Col>
+          <Col>
+            <Row gutter={[12, 12]}>
+              <Col>
+                <Search placeholder="Search.." allowClear onSearch={onSearch} style={{ width: 320 }}/>
+              </Col>
+              <Col>
+                <Button type="primary" icon={<PlusOutlined/>}>Create program</Button>
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+      </Col>
+      <Col span={24}>
+        <Row>
+          <Col span={24} style={{ padding: '16px 24px', background: colorBgContainer, borderRadius: borderRadiusLG }}>
+            <List
+              itemLayout="vertical"
+              size="large"
+              pagination={{
+                onChange: (page) => {
+                  console.log(page);
+                },
+                align: 'center',
+                pageSize: 4,
+              }}
+              dataSource={data}
+              renderItem={(item) => (
+                <List.Item
+                  key={item.title}
+                  actions={[<Button type="primary" key="edit">Edit</Button>,
+                    <Button type="default" danger key="delete">Delete</Button>]}
+                  extra={
+                    <img
+                      width={480}
+                      alt="logo"
+                      src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"
                     />
-                    <div style={{ maxWidth: '640px'}}>{item.content}</div>
-                  </List.Item>
-                  )}
-              />
-            </Col>
-          </Row>
-        </Col>
-      </Row>
-    </RootLayout>
+                  }
+                  style={{ display: 'flex', alignItems: 'center' }}
+                >
+                  <List.Item.Meta
+                    avatar={<Avatar size={56} src={item.avatar}/>}
+                    title={<a href={item.href}>{item.title}</a>}
+                    description={item.description}
+                  />
+                  <div style={{ maxWidth: '640px' }}>{item.content}</div>
+                </List.Item>
+              )}
+            />
+          </Col>
+        </Row>
+      </Col>
+    </Row>
   );
 };
 

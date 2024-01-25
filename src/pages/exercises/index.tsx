@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Avatar, Button, Col, Input, List, Row, Skeleton, theme, Typography } from 'antd';
 import type { SearchProps } from 'antd/es/input/Search';
-import RootLayout from '@/layouts/RootLayout';
 import { PlusOutlined } from '@ant-design/icons';
 
 interface DataType {
@@ -93,55 +92,54 @@ const Exercises: React.FC = () => {
   const [align, setAlign] = useState<PaginationAlign>('center');
 
   return (
-    <RootLayout>
-      <Row gutter={[16, 24]}>
-        <Col span={24}>
-          <Row justify="space-between" align="middle">
-            <Col>
-              <Title level={2} style={{ marginBottom: 0 }}>
-                Exercises
-              </Title>
-            </Col>
-            <Col>
-              <Row gutter={[12, 12]}>
-                <Col>
-                  <Search placeholder="Search.." allowClear onSearch={onSearch} style={{ width: 320 }} />
-                </Col>
-                <Col>
-                  <Button type="primary" icon={<PlusOutlined />}>Add exercise</Button>
-                </Col>
-              </Row>
-            </Col>
-          </Row>
-        </Col>
-        <Col span={24}>
-          <Row>
-            <Col span={24} style={{ padding: '16px 24px', background: colorBgContainer, borderRadius: borderRadiusLG }}>
-              <List
-                pagination={{ position, align }}
-                className="demo-loadmore-list"
-                loading={initLoading}
-                itemLayout="horizontal"
-                dataSource={list}
-                renderItem={(item) => (
-                  <List.Item
-                    actions={[<Button type="text" key="edit">Edit</Button>, <Button type="text" danger key="delete">Delete</Button>]}
-                  >
-                    <Skeleton avatar title={false} loading={item.loading} active>
-                      <List.Item.Meta
-                        avatar={<Avatar size={56} src={item.picture.large}/>}
-                        title={<a href="https://ant.design">{item.name?.last}</a>}
-                        description="Ant Design, a design language for background applications, is refined by Ant UED Team"
-                      />
-                    </Skeleton>
-                  </List.Item>
-                )}
-              />
-            </Col>
-          </Row>
-        </Col>
-      </Row>
-    </RootLayout>
+    <Row gutter={[16, 24]}>
+      <Col span={24}>
+        <Row justify="space-between" align="middle">
+          <Col>
+            <Title level={2} style={{ marginBottom: 0 }}>
+              Exercises
+            </Title>
+          </Col>
+          <Col>
+            <Row gutter={[12, 12]}>
+              <Col>
+                <Search placeholder="Search.." allowClear onSearch={onSearch} style={{ width: 320 }}/>
+              </Col>
+              <Col>
+                <Button type="primary" icon={<PlusOutlined/>}>Add exercise</Button>
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+      </Col>
+      <Col span={24}>
+        <Row>
+          <Col span={24} style={{ padding: '16px 24px', background: colorBgContainer, borderRadius: borderRadiusLG }}>
+            <List
+              pagination={{ position, align }}
+              className="demo-loadmore-list"
+              loading={initLoading}
+              itemLayout="horizontal"
+              dataSource={list}
+              renderItem={(item) => (
+                <List.Item
+                  actions={[<Button type="text" key="edit">Edit</Button>,
+                    <Button type="text" danger key="delete">Delete</Button>]}
+                >
+                  <Skeleton avatar title={false} loading={item.loading} active>
+                    <List.Item.Meta
+                      avatar={<Avatar size={56} src={item.picture.large}/>}
+                      title={<a href="https://ant.design">{item.name?.last}</a>}
+                      description="Ant Design, a design language for background applications, is refined by Ant UED Team"
+                    />
+                  </Skeleton>
+                </List.Item>
+              )}
+            />
+          </Col>
+        </Row>
+      </Col>
+    </Row>
   );
 };
 

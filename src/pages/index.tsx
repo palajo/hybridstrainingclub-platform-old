@@ -1,7 +1,5 @@
 import React from 'react';
-import { BadgeProps, CalendarProps, Space } from 'antd';
-import { Badge, Calendar, Col, Row, Select, theme, Typography } from 'antd';
-import RootLayout from '@/layouts/RootLayout';
+import { Badge, BadgeProps, Calendar, CalendarProps, Col, Row, Select, Space, theme, Typography } from 'antd';
 import type { Dayjs } from 'dayjs';
 
 const { Title } = Typography;
@@ -83,36 +81,35 @@ const Homepage: React.FC = () => {
   };
 
   return (
-    <RootLayout>
-      <Row gutter={[16, 24]}>
-        <Col span={24}>
-          <Row justify="space-between" align="middle">
-            <Col>
-              <Title level={2} style={{ marginBottom: 0 }}>
-                Calendar
-              </Title>
-            </Col>
-            <Col>
-              <Select
-                defaultValue="program-1"
-                style={{ width: 240 }}
-                onChange={handleSelectChange}
-                options={[
-                  { value: 'program-1', label: 'Program #1' },
-                  { value: 'program-2', label: 'Program #2' },
-                  { value: 'program-3', label: 'Program #3' },
-                ]}
-              />
-            </Col>
-          </Row>
-        </Col>
-        <Col span={24}>
-          <Space direction="vertical" style={{ padding: '16px 24px', background: colorBgContainer, borderRadius: borderRadiusLG }}>
-            <Calendar cellRender={cellRender}/>
-          </Space>
-        </Col>
-      </Row>
-    </RootLayout>
+    <Row gutter={[16, 24]}>
+      <Col span={24}>
+        <Row justify="space-between" align="middle">
+          <Col>
+            <Title level={2} style={{ marginBottom: 0 }}>
+              Calendar
+            </Title>
+          </Col>
+          <Col>
+            <Select
+              defaultValue="program-1"
+              style={{ width: 240 }}
+              onChange={handleSelectChange}
+              options={[
+                { value: 'program-1', label: 'Program #1' },
+                { value: 'program-2', label: 'Program #2' },
+                { value: 'program-3', label: 'Program #3' },
+              ]}
+            />
+          </Col>
+        </Row>
+      </Col>
+      <Col span={24}>
+        <Space direction="vertical"
+               style={{ padding: '16px 24px', background: colorBgContainer, borderRadius: borderRadiusLG }}>
+          <Calendar cellRender={cellRender}/>
+        </Space>
+      </Col>
+    </Row>
   );
 };
 

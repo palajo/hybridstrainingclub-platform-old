@@ -1,7 +1,7 @@
 import React from 'react';
 import { ConfigProvider } from 'antd';
 import type { AppProps } from 'next/app';
-
+import RootLayout from '@/layouts/RootLayout';
 import '@/styles/globals.css';
 
 const App = ({ Component, pageProps }: AppProps) => (
@@ -26,15 +26,17 @@ const App = ({ Component, pageProps }: AppProps) => (
         Menu: {
           darkItemBg: '#0E2420',
           darkSubMenuItemBg: '#0E3B32',
-          darkPopupBg: '#0E3B32'
+          darkPopupBg: '#0E3B32',
         },
         Anchor: {
           colorPrimary: '#17E4B1',
-        }
+        },
       },
     }}
   >
-    <Component {...pageProps} />
+    <RootLayout>
+      <Component {...pageProps} />
+    </RootLayout>
   </ConfigProvider>
 );
 
