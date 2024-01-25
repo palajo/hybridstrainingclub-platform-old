@@ -12,11 +12,11 @@ const App = ({ Component, pageProps }: AppProps) => (
       },
       components: {
         Button: {
-          colorPrimary: '#00b96b',
+          colorPrimary: '#17E4B1',
           algorithm: true, // Enable algorithm
         },
         Input: {
-          colorPrimary: '#eb2f96',
+          colorPrimary: '#17E4B1',
           algorithm: true, // Enable algorithm
         },
         Layout: {
@@ -28,6 +28,9 @@ const App = ({ Component, pageProps }: AppProps) => (
           darkSubMenuItemBg: '#0E3B32',
           darkPopupBg: '#0E3B32'
         },
+        Anchor: {
+          colorPrimary: '#17E4B1',
+        }
       },
     }}
   >

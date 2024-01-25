@@ -1,19 +1,15 @@
 import React from 'react';
-import { Layout, theme } from 'antd';
+import { Layout } from 'antd';
 import Sidebar from '@/components/layout/Sider';
 
-const { Header, Content, Footer } = Layout;
+const { Content, Footer } = Layout;
 
 const RootLayout = ({ children }: React.PropsWithChildren) => {
-  const {
-    token: { colorBgContainer, borderRadiusLG },
-  } = theme.useToken();
-
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Sidebar/>
       <Layout>
-        <Content style={{ margin: '0 16px' }}>
+        <Content style={{ margin: '24px' }}>
           {children}
         </Content>
         <Footer style={{ textAlign: 'center' }}>

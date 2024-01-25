@@ -1,8 +1,16 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Layout, Menu, type MenuProps } from 'antd';
-import { CalendarOutlined, UnorderedListOutlined, UserOutlined } from '@ant-design/icons';
+import {
+  AimOutlined,
+  CalendarOutlined, ContainerOutlined,
+  OrderedListOutlined,
+  UnorderedListOutlined,
+  UserOutlined,
+} from '@ant-design/icons';
 import Image from 'next/image';
 import Logo from '@/images/logo.png';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 const { Sider } = Layout;
 
@@ -23,28 +31,43 @@ function getItem(
 }
 
 const items: MenuItem[] = [
-  getItem('Calendar', 'calendar', <CalendarOutlined/>),
+  getItem(<Link href="/" shallow={true}>Calendar</Link>, '/', <CalendarOutlined/>),
   getItem('Programs', 'programs-submenu', <UnorderedListOutlined/>, [
-    getItem('Programs', 'programs'),
-    getItem('Workouts', 'workouts'),
-    getItem('Exercises', 'exercises'),
+    getItem(<Link href="/programs" shallow={true}>Programs</Link>, '/programs', <OrderedListOutlined/>),
+    getItem(<Link href="/workouts" shallow={true}>Workouts</Link>, '/workouts', <ContainerOutlined/>),
+    getItem(<Link href="/exercises" shallow={true}>Exercises</Link>, '/exercises', <AimOutlined/>),
   ]),
-  getItem('Clients', 'clients', <UserOutlined/>),
+  getItem(<Link href="/clients" shallow={true}>Clients</Link>, '/clients', <UserOutlined/>),
 ];
 
 const Sidebar: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
+
+  const [current, setCurrent] = useState('');
+
+  const router = useRouter();
+
+  useEffect(() => {
+    setCurrent(router.pathname);
+  }, [router.asPath]);
+
+  const onClick: MenuProps['onClick'] = (e) => {
+    setCurrent(e.key);
+  };
+
   return (
     <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
-      <Image src={Logo.src} alt="HybridsTrainingClub - Logo" width={Logo.width} height={Logo.height} style={{
-        width: '100%',
-        height: '64px',
-        objectFit: 'contain',
-        objectPosition: 'center',
-        margin: '16px 0',
-        padding: '0 12px',
-      }}/>
-      <Menu theme="dark" defaultSelectedKeys={['calendar']} mode="inline" items={items}/>
+      <Link href="/" shallow={true}>
+        <Image src={Logo.src} alt="HybridsTrainingClub - Logo" width={Logo.width} height={Logo.height} style={{
+          width: '100%',
+          height: '56px',
+          objectFit: 'contain',
+          objectPosition: 'center',
+          margin: '16px 0',
+          padding: '0 16px',
+        }}/>
+      </Link>
+      <Menu theme="dark" mode="inline" onClick={onClick} selectedKeys={[current]} items={items}/>
     </Sider>
   );
 };

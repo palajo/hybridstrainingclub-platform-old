@@ -1,12 +1,6 @@
-import Document, {
-  Html,
-  Head,
-  Main,
-  NextScript,
-  DocumentContext,
-} from "next/document";
-import { doExtraStyle } from "../scripts/genAntdCss";
-import { StyleProvider, createCache } from "@ant-design/cssinjs";
+import Document, { DocumentContext, Head, Html, Main, NextScript } from 'next/document';
+import { doExtraStyle } from '../scripts/genAntdCss';
+import { createCache, StyleProvider } from '@ant-design/cssinjs';
 
 const MyDocument = () => (
   <Html lang="en">

@@ -1,69 +1,119 @@
-import React, { useState } from 'react';
-import {
-  DesktopOutlined,
-  FileOutlined,
-  PieChartOutlined,
-  TeamOutlined,
-  UserOutlined,
-} from '@ant-design/icons';
-import type { MenuProps } from 'antd';
-import { Breadcrumb, Layout, Menu, theme } from 'antd';
+import React from 'react';
+import { BadgeProps, CalendarProps, Space } from 'antd';
+import { Badge, Calendar, Col, Row, Select, theme, Typography } from 'antd';
 import RootLayout from '@/layouts/RootLayout';
+import type { Dayjs } from 'dayjs';
 
-const { Header, Content, Footer, Sider } = Layout;
+const { Title } = Typography;
 
-type MenuItem = Required<MenuProps>['items'][number];
+const getListData = (value: Dayjs) => {
+  let listData;
+  switch (value.date()) {
+    case 8:
+      listData = [
+        { type: 'warning', content: 'This is warning event.' },
+        { type: 'success', content: 'This is usual event.' },
+      ];
+      break;
+    case 10:
+      listData = [
+        { type: 'warning', content: 'This is warning event.' },
+        { type: 'success', content: 'This is usual event.' },
+        { type: 'error', content: 'This is error event.' },
+      ];
+      break;
+    case 15:
+      listData = [
+        { type: 'warning', content: 'This is warning event' },
+        { type: 'success', content: 'This is very long usual event......' },
+        { type: 'error', content: 'This is error event 1.' },
+        { type: 'error', content: 'This is error event 2.' },
+        { type: 'error', content: 'This is error event 3.' },
+        { type: 'error', content: 'This is error event 4.' },
+      ];
+      break;
+    default:
+  }
+  return listData || [];
+};
 
-function getItem(
-  label: React.ReactNode,
-  key: React.Key,
-  icon?: React.ReactNode,
-  children?: MenuItem[],
-): MenuItem {
-  return {
-    key,
-    icon,
-    children,
-    label,
-  } as MenuItem;
-}
+const getMonthData = (value: Dayjs) => {
+  if (value.month() === 8) {
+    return 1394;
+  }
+};
 
-const items: MenuItem[] = [
-  getItem('Option 1', '1', <PieChartOutlined />),
-  getItem('Option 2', '2', <DesktopOutlined />),
-  getItem('User', 'sub1', <UserOutlined />, [
-    getItem('Tom', '3'),
-    getItem('Bill', '4'),
-    getItem('Alex', '5'),
-  ]),
-  getItem('Team', 'sub2', <TeamOutlined />, [getItem('Team 1', '6'), getItem('Team 2', '8')]),
-  getItem('Files', '9', <FileOutlined />),
-];
 
-const App: React.FC = () => {
-  const [collapsed, setCollapsed] = useState(false);
+const Homepage: React.FC = () => {
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
 
+  const handleSelectChange = (value: string) => {
+    console.log(`selected ${value}`);
+  };
+
+  const monthCellRender = (value: Dayjs) => {
+    const num = getMonthData(value);
+    return num ? (
+      <div className="notes-month">
+        <section>{num}</section>
+        <span>Backlog number</span>
+      </div>
+    ) : null;
+  };
+
+  const dateCellRender = (value: Dayjs) => {
+    const listData = getListData(value);
+    return (
+      <ul className="events">
+        {listData.map((item) => (
+          <li key={item.content}>
+            <Badge status={item.type as BadgeProps['status']} text={item.content}/>
+          </li>
+        ))}
+      </ul>
+    );
+  };
+
+  const cellRender: CalendarProps<Dayjs>['cellRender'] = (current, info) => {
+    if (info.type === 'date') return dateCellRender(current);
+    if (info.type === 'month') return monthCellRender(current);
+    return info.originNode;
+  };
+
   return (
     <RootLayout>
-      <Breadcrumb style={{ margin: '16px 0' }}>
-        <Breadcrumb.Item>User</Breadcrumb.Item>
-        <Breadcrumb.Item>Bill</Breadcrumb.Item>
-      </Breadcrumb>
-      <div
-        style={{
-          padding: 24,
-          minHeight: 360,
-          background: colorBgContainer,
-          borderRadius: borderRadiusLG,
-        }}
-      >
-        Bill is a cat.
-      </div>
+      <Row gutter={[16, 24]}>
+        <Col span={24}>
+          <Row justify="space-between" align="middle">
+            <Col>
+              <Title level={2} style={{ marginBottom: 0 }}>
+                Calendar
+              </Title>
+            </Col>
+            <Col>
+              <Select
+                defaultValue="program-1"
+                style={{ width: 240 }}
+                onChange={handleSelectChange}
+                options={[
+                  { value: 'program-1', label: 'Program #1' },
+                  { value: 'program-2', label: 'Program #2' },
+                  { value: 'program-3', label: 'Program #3' },
+                ]}
+              />
+            </Col>
+          </Row>
+        </Col>
+        <Col span={24}>
+          <Space direction="vertical" style={{ padding: '16px 24px', background: colorBgContainer, borderRadius: borderRadiusLG }}>
+            <Calendar cellRender={cellRender}/>
+          </Space>
+        </Col>
+      </Row>
     </RootLayout>
   );
 };
 
-export default App;
+export default Homepage;
