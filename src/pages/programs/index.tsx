@@ -1,7 +1,9 @@
 import React from 'react';
 import { Avatar, Button, Col, Input, List, Row, Space, theme, Typography } from 'antd';
 import type { SearchProps } from 'antd/es/input/Search';
-import { PlusOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
+import { useRouter } from 'next/router';
+import Link from 'next/link';
 
 const { Search } = Input;
 const { Title } = Typography;
@@ -25,6 +27,8 @@ const IconText = ({ icon, text }: { icon: React.FC; text: string }) => (
 
 
 const Programs: React.FC = () => {
+  const router = useRouter();
+
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
@@ -54,45 +58,43 @@ const Programs: React.FC = () => {
           </Col>
         </Row>
       </Col>
-      <Col span={24}>
-        <Row>
-          <Col span={24} style={{ padding: '16px 24px', background: colorBgContainer, borderRadius: borderRadiusLG }}>
-            <List
-              itemLayout="vertical"
-              size="large"
-              pagination={{
-                onChange: (page) => {
-                  console.log(page);
-                },
-                align: 'center',
-                pageSize: 4,
-              }}
-              dataSource={data}
-              renderItem={(item) => (
-                <List.Item
-                  key={item.title}
-                  actions={[<Button type="primary" key="edit">Edit</Button>,
-                    <Button type="default" danger key="delete">Delete</Button>]}
-                  extra={
-                    <img
-                      width={480}
-                      alt="logo"
-                      src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"
-                    />
-                  }
-                  style={{ display: 'flex', alignItems: 'center' }}
-                >
-                  <List.Item.Meta
-                    avatar={<Avatar size={56} src={item.avatar}/>}
-                    title={<a href={item.href}>{item.title}</a>}
-                    description={item.description}
-                  />
-                  <div style={{ maxWidth: '640px' }}>{item.content}</div>
-                </List.Item>
-              )}
-            />
-          </Col>
-        </Row>
+      <Col span={24} style={{ padding: '16px 24px', background: colorBgContainer, borderRadius: borderRadiusLG }}>
+        <List
+          itemLayout="vertical"
+          size="large"
+          pagination={{
+            onChange: (page) => {
+              console.log(page);
+            },
+            align: 'center',
+            pageSize: 4,
+          }}
+          dataSource={data}
+          renderItem={(item) => (
+            <List.Item
+              key={item.title}
+              actions={[
+                <Button type="text" key="edit" onClick={() => router.push('/programs/program')}><EditOutlined/></Button>,
+                <Button type="text" danger key="delete"><DeleteOutlined/></Button>,
+              ]}
+              extra={
+                <img
+                  width={480}
+                  alt="logo"
+                  src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"
+                />
+              }
+              style={{ display: 'flex', alignItems: 'center' }}
+            >
+              <List.Item.Meta
+                avatar={<Avatar size={56} src={item.avatar}/>}
+                title={<Link href="/programs/program">{item.title}</Link>}
+                description={item.description}
+              />
+              <div style={{ maxWidth: '640px' }}>{item.content}</div>
+            </List.Item>
+          )}
+        />
       </Col>
     </Row>
   );

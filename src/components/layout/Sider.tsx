@@ -43,13 +43,7 @@ const items: MenuItem[] = [
 const Sidebar: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
 
-  const [current, setCurrent] = useState('');
-
-  const router = useRouter();
-
-  useEffect(() => {
-    setCurrent(router.pathname);
-  }, [router.asPath]);
+  const [current, setCurrent] = useState('/');
 
   const onClick: MenuProps['onClick'] = (e) => {
     setCurrent(e.key);

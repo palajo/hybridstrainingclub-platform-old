@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Avatar, Button, Col, Input, List, Row, Skeleton, theme, Typography } from 'antd';
 import type { SearchProps } from 'antd/es/input/Search';
-import { PlusOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
+import { useRouter } from 'next/router';
+import Link from 'next/link';
 
 interface DataType {
   gender?: string;
@@ -32,6 +34,8 @@ type PaginationAlign = 'start' | 'center' | 'end';
 
 
 const Exercises: React.FC = () => {
+  const router = useRouter();
+
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
@@ -112,32 +116,30 @@ const Exercises: React.FC = () => {
           </Col>
         </Row>
       </Col>
-      <Col span={24}>
-        <Row>
-          <Col span={24} style={{ padding: '16px 24px', background: colorBgContainer, borderRadius: borderRadiusLG }}>
-            <List
-              pagination={{ position, align }}
-              className="demo-loadmore-list"
-              loading={initLoading}
-              itemLayout="horizontal"
-              dataSource={list}
-              renderItem={(item) => (
-                <List.Item
-                  actions={[<Button type="text" key="edit">Edit</Button>,
-                    <Button type="text" danger key="delete">Delete</Button>]}
-                >
-                  <Skeleton avatar title={false} loading={item.loading} active>
-                    <List.Item.Meta
-                      avatar={<Avatar size={56} src={item.picture.large}/>}
-                      title={<a href="https://ant.design">{item.name?.last}</a>}
-                      description="Ant Design, a design language for background applications, is refined by Ant UED Team"
-                    />
-                  </Skeleton>
-                </List.Item>
-              )}
-            />
-          </Col>
-        </Row>
+      <Col span={24} style={{ padding: '16px 24px', background: colorBgContainer, borderRadius: borderRadiusLG }}>
+        <List
+          pagination={{ position, align }}
+          className="demo-loadmore-list"
+          loading={initLoading}
+          itemLayout="horizontal"
+          dataSource={list}
+          renderItem={(item) => (
+            <List.Item
+              actions={[
+                <Button type="text" key="edit" onClick={() => router.push('/exercises/exercise')}><EditOutlined/></Button>,
+                <Button type="text" danger key="delete"><DeleteOutlined/></Button>,
+              ]}
+            >
+              <Skeleton avatar title={false} loading={item.loading} active>
+                <List.Item.Meta
+                  avatar={<Avatar size={56} src={item.picture.large}/>}
+                  title={<Link href="/exercises/exercise">{item.name?.last}</Link>}
+                  description="Ant Design, a design language for background applications, is refined by Ant UED Team"
+                />
+              </Skeleton>
+            </List.Item>
+          )}
+        />
       </Col>
     </Row>
   );

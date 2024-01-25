@@ -9,7 +9,7 @@ const RootLayout = ({ children }: React.PropsWithChildren) => {
     <Layout style={{ minHeight: '100vh' }}>
       <Sidebar/>
       <Layout>
-        <Content style={{ margin: '24px' }}>
+        <Content style={{ margin: '24px 36px' }}>
           {children}
         </Content>
         <Footer style={{ textAlign: 'center' }}>

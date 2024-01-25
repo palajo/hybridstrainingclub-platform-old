@@ -1,5 +1,5 @@
 import React from 'react';
-import { Badge, BadgeProps, Calendar, CalendarProps, Col, Row, Select, Space, theme, Typography } from 'antd';
+import { Badge, BadgeProps, Calendar, CalendarProps, Col, Row, Select, theme, Typography } from 'antd';
 import type { Dayjs } from 'dayjs';
 
 const { Title } = Typography;
@@ -103,11 +103,8 @@ const Homepage: React.FC = () => {
           </Col>
         </Row>
       </Col>
-      <Col span={24}>
-        <Space direction="vertical"
-               style={{ padding: '16px 24px', background: colorBgContainer, borderRadius: borderRadiusLG }}>
-          <Calendar cellRender={cellRender}/>
-        </Space>
+      <Col span={24} style={{ padding: '16px 24px', background: colorBgContainer, borderRadius: borderRadiusLG }}>
+        <Calendar cellRender={cellRender}/>
       </Col>
     </Row>
   );

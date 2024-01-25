@@ -2,6 +2,9 @@ import React from 'react';
 import { Avatar, Button, Card, Col, Input, List, Row, theme, Typography } from 'antd';
 import type { SearchProps } from 'antd/es/input/Search';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
+import Link from 'next/link';
+import { router } from 'next/client';
+import { useRouter } from 'next/router';
 
 const { Meta } = Card;
 const { Search } = Input;
@@ -18,6 +21,8 @@ const data = Array.from({ length: 24 }).map((_, i) => ({
 }));
 
 const Workouts: React.FC = () => {
+  const router = useRouter();
+
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
@@ -76,13 +81,13 @@ const Workouts: React.FC = () => {
                   />
                 }
                 actions={[
-                  <EditOutlined key="edit"/>,
-                  <DeleteOutlined key="delete"/>,
+                  <Button type="text" key="edit" onClick={() => router.push('/workouts/workout')}><EditOutlined/></Button>,
+                  <Button type="text" danger key="delete"><DeleteOutlined/></Button>,
                 ]}
               >
                 <Meta
                   avatar={<Avatar size={56} src={item.avatar}/>}
-                  title={<a href={item.href}>{item.title}</a>}
+                  title={<Link href="/workouts/workout">{item.title}</Link>}
                   description={item.description}
                 />
               </Card>
