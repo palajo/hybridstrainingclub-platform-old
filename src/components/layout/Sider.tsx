@@ -3,7 +3,7 @@ import { Layout, Menu, type MenuProps } from 'antd';
 import {
   AimOutlined,
   CalendarOutlined, ContainerOutlined,
-  OrderedListOutlined,
+  OrderedListOutlined, SettingOutlined,
   UnorderedListOutlined,
   UserOutlined,
 } from '@ant-design/icons';
@@ -32,7 +32,7 @@ function getItem(
 
 const items: MenuItem[] = [
   getItem(<Link href="/" shallow={true}>Calendar</Link>, '/', <CalendarOutlined/>),
-  getItem('Programs', 'programs-submenu', <UnorderedListOutlined/>, [
+  getItem('Workout Builder', 'programs-submenu', <SettingOutlined/>, [
     getItem(<Link href="/programs" shallow={true}>Programs</Link>, '/programs', <OrderedListOutlined/>),
     getItem(<Link href="/workouts" shallow={true}>Workouts</Link>, '/workouts', <ContainerOutlined/>),
     getItem(<Link href="/exercises" shallow={true}>Exercises</Link>, '/exercises', <AimOutlined/>),
