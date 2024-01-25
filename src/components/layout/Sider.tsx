@@ -36,7 +36,7 @@ const Sidebar: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   return (
     <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
-      <Image src={Logo.src} alt={Logo.alt} width={Logo.width} height={Logo.height} style={{
+      <Image src={Logo.src} alt="HybridsTrainingClub - Logo" width={Logo.width} height={Logo.height} style={{
         width: '100%',
         height: '64px',
         objectFit: 'contain',
