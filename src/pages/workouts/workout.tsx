@@ -212,6 +212,7 @@ const Workout: React.FC = () => {
                         },
                       }}
                       rowKey="key"
+                      // @ts-ignore
                       columns={columns}
                       dataSource={dataSource}
                       pagination={false}
