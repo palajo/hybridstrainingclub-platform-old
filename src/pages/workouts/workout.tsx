@@ -250,6 +250,7 @@ const Workout: React.FC = () => {
                         },
                       }}
                       rowKey="key"
+                      // @ts-ignore
                       columns={exercisesColumns}
                       dataSource={dataSource}
                       pagination={false}
