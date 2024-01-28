@@ -212,12 +212,15 @@ export default function SortableTable({
 
     const collapsedItems = flattenedTree.reduce<number[]>(
       (acc, { children, collapsed, id }) =>
+        // @ts-ignore
         collapsed && children.length ? [...acc, id] : acc,
       [],
     );
 
+
     return removeChildrenOf(
       flattenedTree,
+      // @ts-ignore
       activeId ? [activeId, ...collapsedItems] : collapsedItems,
     );
   }, [activeId, items]);
@@ -355,10 +358,10 @@ export default function SortableTable({
           }}
           expandable={{
             defaultExpandAllRows: true,
-            expandIcon: ({ expanded, onExpand, record }) => {},
           }}
           indentSize={indentationWidth}
           rowKey="key"
+          // @ts-ignore
           columns={columns}
           dataSource={items}
           pagination={false}

@@ -39,6 +39,7 @@ export default function SortableTreeNode({ children, ...props }: RowProps) {
     <tr {...props} ref={setNodeRef} style={style} {...attributes}>
       {React.Children.map(children, (child) => {
         if ((child as React.ReactElement).key === 'title') {
+          // @ts-ignore
           const { record } = child.props;
 
           const { id, title } = record;
