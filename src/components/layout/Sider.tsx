@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Layout, Menu, type MenuProps } from 'antd';
 import {
   AimOutlined,
-  CalendarOutlined, ContainerOutlined,
-  OrderedListOutlined, SettingOutlined,
-  UnorderedListOutlined,
+  CalendarOutlined,
+  ContainerOutlined,
+  OrderedListOutlined,
+  SettingOutlined,
   UserOutlined,
 } from '@ant-design/icons';
 import Image from 'next/image';
 import Logo from '@/images/logo.png';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 
 const { Sider } = Layout;
 

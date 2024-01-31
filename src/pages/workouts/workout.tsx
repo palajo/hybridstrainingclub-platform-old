@@ -1,173 +1,130 @@
 import React, { useState } from 'react';
-import { Button, Col, Input, Row, Table, Tag, theme, Typography } from 'antd';
-import { MenuOutlined, MinusOutlined } from '@ant-design/icons';
-import type { DragEndEvent } from '@dnd-kit/core';
-import { DndContext } from '@dnd-kit/core';
-import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
-import type { ColumnsType } from 'antd/es/table';
-import type { SearchProps } from 'antd/es/input/Search';
-
-const { Search } = Input;
+import {
+  Button,
+  Col,
+  DatePicker,
+  DatePickerProps,
+  Form,
+  FormInstance,
+  Input,
+  Row,
+  Space,
+  Tag,
+  theme,
+  Typography,
+} from 'antd';
+import { MinusOutlined } from '@ant-design/icons';
+import WorkoutTable from '@/components/Workout/WorkoutTable';
+import { generate } from '@ant-design/colors';
 
 const { Title } = Typography;
 
-interface DataType {
-  key: string;
-  title: string;
-  category: string;
-  video: string;
-  sets: number;
-  reps: number;
-  rest: number;
-}
+const ProgramContext = React.createContext<FormInstance<any> | null>(null);
 
-const columns: ColumnsType<DataType> = [
-  {
-    key: 'sort',
-  },
-  {
-    title: 'Exercise',
-    dataIndex: 'title',
-  },
-  {
-    title: 'Category',
-    dataIndex: 'category',
-  },
-  {
-    title: 'Video',
-    dataIndex: 'video',
-  },
-  {
-    title: 'Sets',
-    dataIndex: 'sets',
-  },
-  {
-    title: 'Reps',
-    dataIndex: 'reps',
-  },
-  {
-    title: 'Rest',
-    dataIndex: 'rest',
-  },
-];
-
-const exercisesColumns: ColumnsType<DataType> = [
-  {
-    key: 'sort',
-  },
-  {
-    title: 'Exercise',
-    dataIndex: 'title',
-  },
-  {
-    title: 'Category',
-    dataIndex: 'category',
-  },
-];
-
-interface RowProps extends React.HTMLAttributes<HTMLTableRowElement> {
-  'data-row-key': string;
-}
-
-const TableRow = ({ children, ...props }: RowProps) => {
+const WorkoutBlock: React.FC = () => {
   const {
-    attributes,
-    listeners,
-    setNodeRef,
-    setActivatorNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({
-    id: props['data-row-key'],
-  });
-
-  const style: React.CSSProperties = {
-    ...props.style,
-    transform: CSS.Transform.toString(transform && { ...transform, scaleY: 1 }),
-    transition,
-    ...(isDragging ? { position: 'relative', zIndex: 9999 } : {}),
-  };
+    token: { colorPrimary, colorBgContainer, borderRadiusLG, paddingLG },
+  } = theme.useToken();
 
   return (
-    <tr {...props} ref={setNodeRef} style={style} {...attributes}>
-      {React.Children.map(children, (child) => {
-        if ((child as React.ReactElement).key === 'sort') {
-          return React.cloneElement(child as React.ReactElement, {
-            children: (
-              <MenuOutlined
-                ref={setActivatorNodeRef}
-                style={{ touchAction: 'none', cursor: 'move' }}
-                {...listeners}
-              />
-            ),
-          });
-        }
-        return child;
-      })}
-    </tr>
+    <Col span={24}>
+      <Space
+        direction="vertical"
+        style={{
+          padding: paddingLG,
+          background: colorBgContainer,
+          borderRadius: borderRadiusLG,
+          borderLeft: '3px solid',
+          borderColor: generate(colorPrimary)[5],
+          width: '100%'
+        }}
+      >
+        <Row>
+          <Col span={24}>
+            <Form.Item
+              label="Block Title"
+              name={['block', 'title']}
+            >
+              <Input placeholder="1 Round"/>
+            </Form.Item>
+          </Col>
+          <Col span={24}>
+            <WorkoutTable/>
+          </Col>
+          <Col span={24}>
+            <Form.Item name={['block', 'notes']} label="Notes" style={{ marginBottom: 0 }}>
+              <Input.TextArea size="large"/>
+            </Form.Item>
+          </Col>
+        </Row>
+      </Space>
+    </Col>
+  );
+};
+
+const WorkoutGroup: React.FC = () => {
+  const {
+    token: { colorPrimary, colorPrimaryBg, borderRadiusLG, paddingLG },
+  } = theme.useToken();
+
+  return (
+    <Col span={24}>
+      <Space
+        direction="vertical"
+        size="middle"
+        style={{
+          padding: paddingLG,
+          background: colorPrimaryBg,
+          borderRadius: borderRadiusLG,
+          borderLeft: '3px solid',
+          borderColor: generate(colorPrimary)[7],
+          width: '100%'
+        }}
+      >
+        <Row>
+          <Col span={24}>
+            <Form.Item
+              label="Group Title"
+              name={['group', 'title']}
+            >
+              <Input placeholder="Warm up"/>
+            </Form.Item>
+          </Col>
+          <Row gutter={[32, 32]}>
+            <WorkoutBlock/>
+            <WorkoutBlock/>
+          </Row>
+        </Row>
+      </Space>
+    </Col>
   );
 };
 
 const Workout: React.FC = () => {
+  const [form] = Form.useForm();
+
   const {
-    token: { colorBgContainer, borderRadiusLG, colorBgLayout },
+    token: { colorBgContainer, colorBorder, borderRadiusLG, colorBgLayout },
   } = theme.useToken();
 
-  const [dataSource, setDataSource] = useState([
-    {
-      key: '1',
-      title: 'Air squats',
-      category: 'Squats & Variations',
-      video: 'https://vimeo.com/753766661',
-      sets: '3',
-      reps: '8',
-      rest: '60',
-    },
-    {
-      key: '2',
-      title: 'Australian Pull ups',
-      category: 'Horizontal Pull',
-      video: 'https://vimeo.com/734352408',
-      sets: '3',
-      reps: '12',
-      rest: '90',
-    },
-    {
-      key: '3',
-      title: 'BB Back squats',
-      category: 'Squats & Variations',
-      video: 'https://vimeo.com/743954557',
-      sets: '4',
-      reps: '15',
-      rest: '120',
-    },
-  ]);
-
-  const onDragEnd = ({ active, over }: DragEndEvent) => {
-    if (active.id !== over?.id) {
-      setDataSource((previous) => {
-        const activeIndex = previous.findIndex((i) => i.key === active.id);
-        const overIndex = previous.findIndex((i) => i.key === over?.id);
-        return arrayMove(previous, activeIndex, overIndex);
-      });
-    }
+  // date picker
+  const onChange: DatePickerProps['onChange'] = (date, dateString) => {
+    console.log(date, dateString);
   };
 
-  const onSearch: SearchProps['onSearch'] = (value, _e, info) => {
-    console.log(info?.source, value);
-  };
+  // disable edit
+  const [componentDisabled, setComponentDisabled] = useState<boolean>(false);
+
 
   return (
     <Row gutter={[16, 24]}>
       <Col span={24}>
         <Row justify="space-between" align="middle">
           <Col>
-            <Row align="middle" gutter={[8, 12]}>
+            <Row align="middle" gutter={[16, 16]}>
               <Col>
                 <Title level={2} style={{ marginBottom: 0 }}>
-                  Workout Title
+                  Prebuilt Workout #1
                 </Title>
               </Col>
               <Col>
@@ -185,80 +142,43 @@ const Workout: React.FC = () => {
         </Row>
       </Col>
       <Col span={24}
-           style={{ background: colorBgContainer, borderRadius: borderRadiusLG, padding: '0', overflow: 'hidden' }}>
-        <Row gutter={[0, 8]}>
-          <Col span={16} style={{ padding: '24px 36px' }}>
-            <Row gutter={[16, 24]}>
-              <Col span={24}>
-                <Row justify="space-between" align="middle">
-                  <Col>
-                    <Title level={4} style={{ marginBottom: 0 }}>
-                      Workout Builder
-                    </Title>
-                  </Col>
-                </Row>
-              </Col>
-              <Col span={24}>
-                <DndContext onDragEnd={onDragEnd}>
-                  <SortableContext
-                    // rowKey array
-                    items={dataSource.map((i) => i.key)}
-                    strategy={verticalListSortingStrategy}
-                  >
-                    <Table
-                      components={{
-                        body: {
-                          row: TableRow,
-                        },
-                      }}
-                      rowKey="key"
-                      // @ts-ignore
-                      columns={columns}
-                      dataSource={dataSource}
-                      pagination={false}
-                    />
-                  </SortableContext>
-                </DndContext>
-              </Col>
-            </Row>
+           style={{
+             background: colorBgContainer,
+             borderRadius: borderRadiusLG,
+             padding: '24px 36px',
+             overflow: 'hidden',
+           }}>
+        <Row gutter={[16, 24]}>
+          <Col span={24}>
           </Col>
-          <Col span={8} style={{ background: colorBgContainer, padding: '24px 36px', borderLeft: `1px solid #f0f0f0` }}>
-            <Row gutter={[16, 24]}>
-              <Col span={24}>
-                <Row justify="space-between" align="middle">
-                  <Col>
-                    <Title level={4} style={{ marginBottom: 0 }}>
-                      Exercises
-                    </Title>
-                  </Col>
-                  <Col>
-                    <Search placeholder="Search.." allowClear onSearch={onSearch} style={{ width: 220 }}/>
-                  </Col>
-                </Row>
-              </Col>
-              <Col span={24}>
-                <DndContext onDragEnd={onDragEnd}>
-                  <SortableContext
-                    // rowKey array
-                    items={dataSource.map((i) => i.key)}
-                    strategy={verticalListSortingStrategy}
+          <Col span={24}>
+            <Form
+              form={form}
+              layout="vertical"
+              disabled={componentDisabled}
+            >
+              <Row gutter={[16, 0]}>
+                <Col span={12}>
+                  <Form.Item label="Workout Date">
+                    <DatePicker onChange={onChange} style={{ width: '100%' }}/>
+                  </Form.Item>
+                </Col>
+                <Col span={12}>
+                  <Form.Item
+                    label="Video"
+                    name="InputNumber"
                   >
-                    <Table
-                      components={{
-                        body: {
-                          row: TableRow,
-                        },
-                      }}
-                      rowKey="key"
-                      // @ts-ignore
-                      columns={exercisesColumns}
-                      dataSource={dataSource}
-                      pagination={false}
-                    />
-                  </SortableContext>
-                </DndContext>
-              </Col>
-            </Row>
+                    <Input placeholder="Vimeo link"/>
+                  </Form.Item>
+                </Col>
+                <Col span={24}>
+                  <Row gutter={[16, 32]}>
+                    <WorkoutGroup/>
+                    <WorkoutGroup/>
+                  </Row>
+                </Col>
+              </Row>
+            </Form>
           </Col>
         </Row>
       </Col>

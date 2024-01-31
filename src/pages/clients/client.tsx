@@ -1,8 +1,9 @@
 import React from 'react';
 import { Button, Col, Row, theme, Typography } from 'antd';
 import { MinusOutlined } from '@ant-design/icons';
-
 const { Title } = Typography;
+
+import ClientMenu from '@/components/Client/Menu';
 
 const Client: React.FC = () => {
   const {
@@ -27,8 +28,19 @@ const Client: React.FC = () => {
           </Col>
         </Row>
       </Col>
-      <Col span={24} style={{ padding: '16px 24px', background: colorBgContainer, borderRadius: borderRadiusLG }}>
-        Hello, world!
+      <Col span={24}
+           style={{ background: colorBgContainer, borderRadius: borderRadiusLG, padding: '0', overflow: 'hidden' }}>
+        <Row gutter={[0, 8]}>
+          <Col span={4}>
+            <Title level={5} style={{ marginBottom: 0, padding: '16px 24px' }}>
+              Navigation
+            </Title>
+            <ClientMenu/>
+          </Col>
+          <Col span={20} style={{ padding: '24px 36px' }}>
+            Hello, world!
+          </Col>
+        </Row>
       </Col>
     </Row>
   );

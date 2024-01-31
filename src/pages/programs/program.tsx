@@ -1,23 +1,121 @@
 import React, { useState } from 'react';
-import { Button, Col, Input, Row, Table, Tag, theme, Typography } from 'antd';
-import { MenuOutlined, MinusOutlined } from '@ant-design/icons';
-import type { DragEndEvent } from '@dnd-kit/core';
-import { DndContext } from '@dnd-kit/core';
-import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
-import type { ColumnsType } from 'antd/es/table';
-import WorkoutMenu from '@/components/Workout/Menu';
-import type { SearchProps } from 'antd/es/input/Search';
-import SortableTable from '@/components/Workout/drag-and-drop';
-
-const { Search } = Input;
+import {
+  Button,
+  Col,
+  DatePicker,
+  DatePickerProps,
+  Form,
+  FormInstance,
+  Input,
+  Row,
+  Space,
+  Tag,
+  theme,
+  Typography,
+} from 'antd';
+import { MinusOutlined } from '@ant-design/icons';
+import WorkoutMenu from '@/components/Workout/WorkoutMenu';
+import WorkoutTable from '@/components/Workout/WorkoutTable';
+import { generate, blue } from '@ant-design/colors';
 
 const { Title } = Typography;
 
-const Program: React.FC = () => {
+const ProgramContext = React.createContext<FormInstance<any> | null>(null);
+
+const WorkoutBlock: React.FC = () => {
   const {
-    token: { colorBgContainer, borderRadiusLG, colorBgLayout },
+    token: { colorPrimary, colorBgContainer, borderRadiusLG, paddingLG },
   } = theme.useToken();
+
+  return (
+    <Col span={24}>
+      <Space
+        direction="vertical"
+        style={{
+          padding: paddingLG,
+          background: colorBgContainer,
+          borderRadius: borderRadiusLG,
+          borderLeft: '3px solid',
+          borderColor: generate(colorPrimary)[5],
+          width: '100%'
+        }}
+      >
+        <Row>
+          <Col span={24}>
+            <Form.Item
+              label="Block Title"
+              name={['block', 'title']}
+            >
+              <Input placeholder="1 Round"/>
+            </Form.Item>
+          </Col>
+          <Col span={24}>
+            <WorkoutTable/>
+          </Col>
+          <Col span={24}>
+            <Form.Item name={['block', 'notes']} label="Notes" style={{ marginBottom: 0}}>
+              <Input.TextArea size="large" />
+            </Form.Item>
+          </Col>
+        </Row>
+      </Space>
+    </Col>
+  );
+};
+
+const WorkoutGroup: React.FC = () => {
+  const {
+    token: { colorPrimary, colorPrimaryBg, borderRadiusLG, paddingLG },
+  } = theme.useToken();
+
+  return (
+    <Col span={24}>
+      <Space
+        direction="vertical"
+        size="middle"
+        style={{
+          padding: paddingLG,
+          background: colorPrimaryBg,
+          borderRadius: borderRadiusLG,
+          borderLeft: '3px solid',
+          borderColor: generate(colorPrimary)[7],
+          width: '100%'
+        }}
+      >
+        <Row>
+          <Col span={24}>
+            <Form.Item
+              label="Group Title"
+              name={['group', 'title']}
+            >
+              <Input placeholder="Warm up"/>
+            </Form.Item>
+          </Col>
+          <Row gutter={[32, 32]}>
+            <WorkoutBlock/>
+            <WorkoutBlock/>
+          </Row>
+        </Row>
+      </Space>
+    </Col>
+  );
+};
+
+const Program: React.FC = () => {
+  const [form] = Form.useForm();
+
+  const {
+    token: { colorBgContainer, colorBorder, borderRadiusLG, colorBgLayout },
+  } = theme.useToken();
+
+  // date picker
+  const onChange: DatePickerProps['onChange'] = (date, dateString) => {
+    console.log(date, dateString);
+  };
+
+  // disable edit
+  const [componentDisabled, setComponentDisabled] = useState<boolean>(false);
+
 
   return (
     <Row gutter={[16, 24]}>
@@ -25,7 +123,7 @@ const Program: React.FC = () => {
         <Row justify="space-between" align="middle">
           <Col>
             <Title level={2} style={{ marginBottom: 0 }}>
-              Workout Title
+              Program Title
             </Title>
           </Col>
           <Col>
@@ -40,10 +138,7 @@ const Program: React.FC = () => {
       <Col span={24}
            style={{ background: colorBgContainer, borderRadius: borderRadiusLG, padding: '0', overflow: 'hidden' }}>
         <Row gutter={[0, 8]}>
-          <Col span={4}>
-            <Title level={5} style={{ marginBottom: 0, padding: '16px 24px' }}>
-              Navigation
-            </Title>
+          <Col span={4} style={{ padding: '16px 0', borderRight: `1px solid ${colorBorder}` }}>
             <WorkoutMenu/>
           </Col>
           <Col span={20} style={{ padding: '24px 36px' }}>
@@ -61,7 +156,33 @@ const Program: React.FC = () => {
                 </Row>
               </Col>
               <Col span={24}>
-                <SortableTable/>
+                <Form
+                  form={form}
+                  layout="vertical"
+                  disabled={componentDisabled}
+                >
+                  <Row gutter={[16, 0]}>
+                    <Col span={12}>
+                      <Form.Item label="Workout Date">
+                        <DatePicker onChange={onChange} style={{ width: '100%' }}/>
+                      </Form.Item>
+                    </Col>
+                    <Col span={12}>
+                      <Form.Item
+                        label="Video"
+                        name="InputNumber"
+                      >
+                        <Input placeholder="Vimeo link"/>
+                      </Form.Item>
+                    </Col>
+                    <Col span={24}>
+                      <Row gutter={[16, 32]}>
+                        <WorkoutGroup/>
+                        <WorkoutGroup/>
+                      </Row>
+                    </Col>
+                  </Row>
+                </Form>
               </Col>
             </Row>
           </Col>

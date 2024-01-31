@@ -3,6 +3,7 @@ import { ConfigProvider, theme } from 'antd';
 import type { AppProps } from 'next/app';
 import RootLayout from '@/layouts/RootLayout';
 import '@/styles/globals.css';
+import { generate } from '@ant-design/colors';
 
 const App = ({ Component, pageProps }: AppProps) => {
   const [darkMode, setDarkMode] = useState(false);
