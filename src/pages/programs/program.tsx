@@ -8,98 +8,17 @@ import {
   FormInstance,
   Input,
   Row,
-  Space,
   Tag,
   theme,
   Typography,
 } from 'antd';
 import { MinusOutlined } from '@ant-design/icons';
 import WorkoutMenu from '@/components/Workout/WorkoutMenu';
-import WorkoutTable from '@/components/Workout/WorkoutTable';
-import { generate, blue } from '@ant-design/colors';
+import WorkoutGroup from '@/components/Workout/WorkoutBuilder/WorkoutGroup';
 
 const { Title } = Typography;
 
 const ProgramContext = React.createContext<FormInstance<any> | null>(null);
-
-const WorkoutBlock: React.FC = () => {
-  const {
-    token: { colorPrimary, colorBgContainer, borderRadiusLG, paddingLG },
-  } = theme.useToken();
-
-  return (
-    <Col span={24}>
-      <Space
-        direction="vertical"
-        style={{
-          padding: paddingLG,
-          background: colorBgContainer,
-          borderRadius: borderRadiusLG,
-          borderLeft: '3px solid',
-          borderColor: generate(colorPrimary)[5],
-          width: '100%'
-        }}
-      >
-        <Row>
-          <Col span={24}>
-            <Form.Item
-              label="Block Title"
-              name={['block', 'title']}
-            >
-              <Input placeholder="1 Round"/>
-            </Form.Item>
-          </Col>
-          <Col span={24}>
-            <WorkoutTable/>
-          </Col>
-          <Col span={24}>
-            <Form.Item name={['block', 'notes']} label="Notes" style={{ marginBottom: 0}}>
-              <Input.TextArea size="large" />
-            </Form.Item>
-          </Col>
-        </Row>
-      </Space>
-    </Col>
-  );
-};
-
-const WorkoutGroup: React.FC = () => {
-  const {
-    token: { colorPrimary, colorPrimaryBg, borderRadiusLG, paddingLG },
-  } = theme.useToken();
-
-  return (
-    <Col span={24}>
-      <Space
-        direction="vertical"
-        size="middle"
-        style={{
-          padding: paddingLG,
-          background: colorPrimaryBg,
-          borderRadius: borderRadiusLG,
-          borderLeft: '3px solid',
-          borderColor: generate(colorPrimary)[7],
-          width: '100%'
-        }}
-      >
-        <Row>
-          <Col span={24}>
-            <Form.Item
-              label="Group Title"
-              name={['group', 'title']}
-            >
-              <Input placeholder="Warm up"/>
-            </Form.Item>
-          </Col>
-          <Row gutter={[32, 32]}>
-            <WorkoutBlock/>
-            <WorkoutBlock/>
-          </Row>
-        </Row>
-      </Space>
-    </Col>
-  );
-};
 
 const Program: React.FC = () => {
   const [form] = Form.useForm();
@@ -177,7 +96,6 @@ const Program: React.FC = () => {
                     </Col>
                     <Col span={24}>
                       <Row gutter={[16, 32]}>
-                        <WorkoutGroup/>
                         <WorkoutGroup/>
                       </Row>
                     </Col>
