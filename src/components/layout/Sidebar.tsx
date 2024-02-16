@@ -41,7 +41,7 @@ const items: MenuItem[] = [
 ];
 
 const Sidebar: React.FC = () => {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
 
   const [current, setCurrent] = useState('/');
 

@@ -6,27 +6,18 @@ import '@/styles/globals.css';
 import { generate } from '@ant-design/colors';
 
 const App = ({ Component, pageProps }: AppProps) => {
-  const [darkMode, setDarkMode] = useState(false);
-
-  useEffect(() => {
-    setDarkMode(window.matchMedia("(prefers-color-scheme:dark)").matches ? true : false);
-  }, []);
-
   return (
     <ConfigProvider
       theme={{
-        algorithm: darkMode ? theme.darkAlgorithm : theme.defaultAlgorithm,
         token: {
           colorPrimary: '#17E4B1',
         },
         components: {
           Button: {
             colorPrimary: '#17E4B1',
-            algorithm: true, // Enable algorithm
           },
           Input: {
             colorPrimary: '#17E4B1',
-            algorithm: true, // Enable algorithm
           },
           Layout: {
             siderBg: '#0E2420',
@@ -40,6 +31,9 @@ const App = ({ Component, pageProps }: AppProps) => {
           Anchor: {
             colorPrimary: '#17E4B1',
           },
+          Form: {
+            colorTextLabel: '#FFFFFF'
+          }
         },
       }}
     >

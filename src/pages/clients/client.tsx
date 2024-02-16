@@ -38,7 +38,9 @@ const Client: React.FC = () => {
             <ClientMenu/>
           </Col>
           <Col span={20} style={{ padding: '24px 36px' }}>
-            Hello, world!
+            <Typography>
+              Hello, world!
+            </Typography>
           </Col>
         </Row>
       </Col>

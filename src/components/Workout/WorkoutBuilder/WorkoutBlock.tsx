@@ -46,7 +46,7 @@ const WorkoutBlock: React.FC = () => {
               <Row>
                 <Col span={24}>
                   <Form.Item
-                    label="Block Title"
+                    label="ModalBlock Title"
                     name={['block', 'title']}
                   >
                     <Input placeholder="1 Round"/>

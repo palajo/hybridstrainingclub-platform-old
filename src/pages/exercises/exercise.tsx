@@ -28,7 +28,9 @@ const Exercise: React.FC = () => {
         </Row>
       </Col>
       <Col span={24} style={{ padding: '16px 24px', background: colorBgContainer, borderRadius: borderRadiusLG }}>
-        Hello, world!
+        <Typography>
+          Hello, world!
+        </Typography>
       </Col>
     </Row>
   );
