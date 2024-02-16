@@ -19,8 +19,8 @@ const ModalBlock: React.FC = () => {
 
   return (
     <>
-      <Button size="small" type="default" onClick={showModal} style={{ width: '100%', margin: '16px 0 0'}}>
-        Edit Block
+      <Button size="small" type="default" onClick={showModal} style={{ width: '100%', margin: '16px 0 0' }}>
+        Edit
       </Button>
       <Modal title="Basic Modal" open={isModalOpen} onOk={handleOk} onCancel={handleCancel} width="960px">
         <Form

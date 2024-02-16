@@ -9,6 +9,7 @@ const App = ({ Component, pageProps }: AppProps) => {
   return (
     <ConfigProvider
       theme={{
+        algorithm: theme.darkAlgorithm,
         token: {
           colorPrimary: '#17E4B1',
         },

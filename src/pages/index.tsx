@@ -1,6 +1,7 @@
 import React from 'react';
-import { Col, Row, Select, theme, Typography } from 'antd';
-import WeeklyCalendar from '@/components/Calendar/Calendar';
+import { Button, Col, Row, Select, theme, Typography } from 'antd';
+import Calendar from '@/components/Calendar/Calendar';
+import { CheckOutlined } from '@ant-design/icons';
 
 const { Title } = Typography;
 
@@ -23,21 +24,30 @@ const Homepage: React.FC = () => {
             </Title>
           </Col>
           <Col>
-            <Select
-              defaultValue="program-1"
-              style={{ width: 240 }}
-              onChange={handleSelectChange}
-              options={[
-                { value: 'program-1', label: 'Program #1' },
-                { value: 'program-2', label: 'Program #2' },
-                { value: 'program-3', label: 'Program #3' },
-              ]}
-            />
+            <Row gutter={[12, 0]}>
+              <Col>
+                <Select
+                  defaultValue="program-1"
+                  style={{ width: 240 }}
+                  onChange={handleSelectChange}
+                  options={[
+                    { value: 'program-1', label: 'Program #1' },
+                    { value: 'program-2', label: 'Program #2' },
+                    { value: 'program-3', label: 'Program #3' },
+                  ]}
+                />
+              </Col>
+              <Col>
+                <Col>
+                  <Button type="primary" icon={<CheckOutlined/>}>Save</Button>
+                </Col>
+              </Col>
+            </Row>
           </Col>
         </Row>
       </Col>
       <Col span={24} style={{ padding: '16px 24px', background: colorBgContainer, borderRadius: borderRadiusLG }}>
-        <WeeklyCalendar/>
+        <Calendar/>
       </Col>
     </Row>
   );

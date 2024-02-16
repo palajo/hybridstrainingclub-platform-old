@@ -11,9 +11,8 @@ import {
 import { arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import dayjs from 'dayjs';
 import Container from './Container';
-import { Button, Col, Row, Typography } from 'antd';
+import { Button, Col, Row, theme, Typography } from 'antd';
 import Group from './Group';
-import { restrictToHorizontalAxis } from '@dnd-kit/modifiers';
 
 interface Items {
   [key: string]: string[];
@@ -54,10 +53,12 @@ const defaultAnnouncements: DefaultAnnouncements = {
 };
 
 export default function Calendar() {
+  const { token: { colorBorder, paddingXS } } = theme.useToken();
+
   const [items, setItems] = useState<Items>({
-    day1: ['1', '2',],
-    day2: ['4', '5',],
-    day3: ['7',],
+    day1: ['1', '2'],
+    day2: ['4', '5'],
+    day3: ['7'],
     day4: [],
     day5: ['3'],
     day6: [],
@@ -141,21 +142,17 @@ export default function Calendar() {
   return (
     <Row gutter={[24, 24]}>
       <Col lg={24}>
-        <Row justify="space-between" gutter={[12, 16]}>
+        <Row justify="space-between" align="middle" gutter={[12, 16]}>
+          <Col>
+            <Button onClick={goToPreviousWeek}>Previous Week</Button>
+          </Col>
           <Col>
             <Typography.Title level={3}>
               {currentDate.startOf('week').format('MMMM D, YYYY')} - {currentDate.endOf('week').format('MMMM D, YYYY')}
             </Typography.Title>
           </Col>
           <Col>
-            <Row gutter={[8, 8]}>
-              <Col>
-                <Button onClick={goToPreviousWeek}>Previous Week</Button>
-              </Col>
-              <Col>
-                <Button onClick={goToNextWeek}>Next Week</Button>
-              </Col>
-            </Row>
+            <Button onClick={goToNextWeek}>Next Week</Button>
           </Col>
         </Row>
       </Col>
@@ -168,11 +165,32 @@ export default function Calendar() {
           onDragOver={handleDragOver}
           onDragEnd={handleDragEnd}
         >
-          <Row gutter={[8, 0]} justify="space-between">
+          <Row justify="space-between">
             {[...Array(7)].map((_, index) => (
-              <Col key={`day${index + 1}`} style={{ width: 'calc(100% / 7)' }}>
-                <Typography.Title level={5} style={{ textAlign: 'center', marginBottom: '12px' }}>Day #{index + 1}</Typography.Title>
-                <Container id={`day${index + 1}`} items={items[`day${index + 1}`]}/>
+              <Col
+                key={`day${index + 1}`}
+                style={{
+                  width: 'calc(100% / 7)',
+                  border: `1px solid ${colorBorder}`,
+                  borderLeft: `${index !== 0 && '0'}`,
+                }}
+              >
+                <Row>
+                  <Col
+                    xs={24}
+                    style={{ borderBottom: `1px solid ${colorBorder}`, padding: paddingXS }}
+                  >
+                    <Typography.Title level={5} style={{ textAlign: 'center', marginBottom: '0' }}>
+                      {currentDate.startOf('week').add(index, 'day').format('dddd')}
+                    </Typography.Title>
+                    <Typography style={{ textAlign: 'center' }}>
+                      {currentDate.startOf('week').add(index, 'day').format('YYYY-MM-DD')}
+                    </Typography>
+                  </Col>
+                  <Col xs={24}>
+                    <Container id={`day${index + 1}`} items={items[`day${index + 1}`]}/>
+                  </Col>
+                </Row>
               </Col>
             ))}
           </Row>

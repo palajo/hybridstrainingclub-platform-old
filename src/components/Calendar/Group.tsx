@@ -1,16 +1,8 @@
 import React, { useState } from 'react';
-import {
-  arrayMove,
-  rectSortingStrategy,
-  SortableContext,
-  useSortable,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
+import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Button, Col, Form, Input, Row, Space, theme, Typography } from 'antd';
-import { CloseOutlined, CopyOutlined, MenuOutlined } from '@ant-design/icons';
-import { generate } from '@ant-design/colors';
-import ModalBlock from '@/components/Calendar/ModalBlock';
+import { Button, Col, Input, Row, theme } from 'antd';
+import { CloseOutlined, CopyOutlined, MenuOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import Block from '@/components/Calendar/Block';
 import { closestCenter, DndContext, MouseSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
@@ -26,7 +18,7 @@ interface ListItem {
 
 export default function Group({ id }: SortableItemProps) {
   const {
-    token: { colorPrimary, borderRadiusLG, colorBgContainer },
+    token: { colorPrimary, borderRadiusLG, colorPrimaryBg, colorPrimaryText, colorPrimaryBorder },
   } = theme.useToken();
 
   const {
@@ -42,10 +34,10 @@ export default function Group({ id }: SortableItemProps) {
   const style: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
     transition,
-    padding: '16px 12px',
-    marginBottom: '32px',
-    borderLeft: `3px solid ${generate(colorPrimary)[2]}`,
-    background: generate(colorPrimary)[1],
+    padding: '12px',
+    marginBottom: '16px',
+    borderLeft: `3px solid ${colorPrimaryBorder}`,
+    background: colorPrimaryBg,
     borderRadius: borderRadiusLG,
   };
 
@@ -112,6 +104,13 @@ export default function Group({ id }: SortableItemProps) {
               ))}
             </SortableContext>
           </DndContext>
+          <Row justify="center">
+            <Col>
+              <Button size="small" type="text">
+                <PlusCircleOutlined/>
+              </Button>
+            </Col>
+          </Row>
         </Col>
       </Row>
     </div>
