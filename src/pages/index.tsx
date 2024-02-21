@@ -1,53 +1,134 @@
 import React from 'react';
-import { Button, Col, Row, Select, theme, Typography } from 'antd';
-import Calendar from '@/components/Calendar/Calendar';
-import { CheckOutlined } from '@ant-design/icons';
-
-const { Title } = Typography;
+import { Button, Col, Form, Input, Row, theme, Typography } from 'antd';
+import { CloseOutlined } from '@ant-design/icons';
 
 const Homepage: React.FC = () => {
   const {
-    token: { colorBgContainer, borderRadiusLG },
+    token: { colorBgContainer, borderRadiusLG, colorPrimaryBorder, colorPrimaryBg }
   } = theme.useToken();
 
-  const handleSelectChange = (value: string) => {
-    console.log(`selected ${value}`);
+  const [form] = Form.useForm();
+
+  // styles
+  const stylesGroup: React.CSSProperties = {
+    padding: '12px',
+    borderLeft: `3px solid ${colorPrimaryBorder}`,
+    background: colorPrimaryBg,
+    borderRadius: borderRadiusLG,
   };
 
   return (
     <Row gutter={[16, 24]}>
-      <Col span={24}>
-        <Row justify="space-between" align="middle">
-          <Col>
-            <Title level={2} style={{ marginBottom: 0 }}>
-              Calendar
-            </Title>
-          </Col>
-          <Col>
-            <Row gutter={[12, 0]}>
-              <Col>
-                <Select
-                  defaultValue="program-1"
-                  style={{ width: 240 }}
-                  onChange={handleSelectChange}
-                  options={[
-                    { value: 'program-1', label: 'Program #1' },
-                    { value: 'program-2', label: 'Program #2' },
-                    { value: 'program-3', label: 'Program #3' },
-                  ]}
-                />
-              </Col>
-              <Col>
-                <Col>
-                  <Button type="primary" icon={<CheckOutlined/>}>Save</Button>
-                </Col>
-              </Col>
-            </Row>
-          </Col>
-        </Row>
-      </Col>
       <Col span={24} style={{ padding: '16px 24px', background: colorBgContainer, borderRadius: borderRadiusLG }}>
-        <Calendar/>
+        <Form
+          form={form}
+          name="programForm"
+          autoComplete="off"
+          initialValues={{
+            program: [{ groups: [{ blocks: [{}] }] },{ groups: [{ blocks: [{}] }] },{ groups: [{ blocks: [{}] }] },{ groups: [{ blocks: [{}] }] },{ groups: [{ blocks: [{}] }] },{ groups: [{ blocks: [{}] }] },{ groups: [{ blocks: [{}] }] },],
+          }}
+        >
+          <Form.List name="program">
+            {(workouts) => (
+              <Row gutter={[16, 16]}>
+                {workouts.map((workout, workoutIndex) => (
+                  <Col xs={3} key={workoutIndex}>
+                    <Row gutter={[16, 16]}>
+                      <Col xs={24}>
+                        <Form.Item name={[workout.name, 'name']} initialValue={`Workout ${workoutIndex + 1}`}>
+                          <Input placeholder="Workout" />
+                        </Form.Item>
+                      </Col>
+                      <Col xs={24}>
+                        <Form.List name={[workout.name, 'groups']}>
+                          {(groups, groupMeta) => (
+                            <>
+                              {groups.map((group, groupIndex) => (
+                                <Col xs={24} key={group.key} style={stylesGroup}>
+                                  <Row gutter={[12, 12]}>
+                                    <Col xs={24}>
+                                      <Form.Item
+                                        name={[group.name, 'title']}
+                                        initialValue={`Group ${groupIndex + 1}`}
+                                      >
+                                        <Input placeholder="Group Title" />
+                                      </Form.Item>
+                                    </Col>
+                                    <Col xs={24}>
+                                      <Form.List name={[group.name, 'blocks']}>
+                                        {(blocks, blockMeta) => (
+                                          <>
+                                            {blocks.map((block, blockIndex) => (
+                                              <Col xs={24} key={block.key} style={stylesGroup}>
+                                                <Row gutter={[12, 12]}>
+                                                  <Col xs={24}>
+                                                    <Form.Item
+                                                      name={[block.name, 'title']}
+                                                      initialValue={`Block ${blockIndex + 1}`}
+                                                    >
+                                                      <Input placeholder="Block Title" />
+                                                    </Form.Item>
+                                                  </Col>
+                                                  <Col xs={24}>
+                                                    <Form.Item name={[block.name, 'notes']}>
+                                                      <Input placeholder="Block Notes" />
+                                                    </Form.Item>
+                                                  </Col>
+                                                  <Col xs={24}>
+                                                    {blocks.length > 1 && (
+                                                      <Button
+                                                        type="link"
+                                                        onClick={() => blockMeta.remove(block.name)}
+                                                      >
+                                                        <CloseOutlined />
+                                                      </Button>
+                                                    )}
+                                                  </Col>
+                                                </Row>
+                                              </Col>
+                                            ))}
+                                            <Col xs={24}>
+                                              <Button type="dashed" onClick={() => blockMeta.add()} block>
+                                                + Add Block
+                                              </Button>
+                                            </Col>
+                                          </>
+                                        )}
+                                      </Form.List>
+                                    </Col>
+                                    <Col xs={24}>
+                                      {groups.length > 1 && (
+                                        <Button type="link" onClick={() => groupMeta.remove(group.name)}>
+                                          <CloseOutlined />
+                                        </Button>
+                                      )}
+                                    </Col>
+                                  </Row>
+                                </Col>
+                              ))}
+                              <Col xs={24}>
+                                <Button type="dashed" onClick={() => groupMeta.add()} block>
+                                  + Add Group
+                                </Button>
+                              </Col>
+                            </>
+                          )}
+                        </Form.List>
+                      </Col>
+                    </Row>
+                  </Col>
+                ))}
+              </Row>
+            )}
+          </Form.List>
+          <Form.Item noStyle shouldUpdate>
+            {() => (
+              <Typography>
+                <pre>{JSON.stringify(form.getFieldsValue(), null, 2)}</pre>
+              </Typography>
+            )}
+          </Form.Item>
+        </Form>
       </Col>
     </Row>
   );
