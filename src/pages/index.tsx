@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { Button, Col, Form, Input, Row, theme, Typography } from 'antd';
-import { CloseOutlined } from '@ant-design/icons';
+import { Button, Col, Form, Input, Modal, Row, theme, Typography } from 'antd';
+import { CloseOutlined, CopyOutlined, MenuOutlined } from '@ant-design/icons';
+import WorkoutTable from '@/components/Workout/WorkoutBuilder/WorkoutTable';
+import dayjs from 'dayjs';
 
-const WorkoutDate = () => {
+const WorkoutDate = ({ date }) => {
   const {
     token: {
       colorBorder,
@@ -17,10 +19,10 @@ const WorkoutDate = () => {
   return (
     <Col xs={24} style={stylesWorkoutDate}>
       <Typography.Title level={5} style={{ textAlign: 'center', marginBottom: '0' }}>
-        Monday
+        {date.startOf('week').add(1, 'day').format('dddd')}
       </Typography.Title>
       <Typography style={{ textAlign: 'center' }}>
-        20-02-2024
+        {date.startOf('week').add(1, 'day').format('YYYY-MM-DD')}
       </Typography>
     </Col>
   );
@@ -29,9 +31,11 @@ const WorkoutDate = () => {
 interface WorkoutProps {
   workout: any;
   onWorkoutChange: (updatedWorkout: any) => void;
+  date: string;
+  key: string;
 }
 
-const Workout: React.FC<WorkoutProps> = ({ workout, onWorkoutChange }) => {
+const Workout: React.FC<WorkoutProps> = ({ workout, date, onWorkoutChange }) => {
   const {
     token: {
       colorBorder,
@@ -42,8 +46,6 @@ const Workout: React.FC<WorkoutProps> = ({ workout, onWorkoutChange }) => {
 
   const handleWorkoutChange = (updatedWorkout: any) => {
     onWorkoutChange(updatedWorkout);
-
-    console.log(workout);
   };
 
   const handleAddGroup = () => {
@@ -68,40 +70,33 @@ const Workout: React.FC<WorkoutProps> = ({ workout, onWorkoutChange }) => {
     <Col style={stylesWorkout}>
       <Form form={form} name="workoutForm">
         <Row>
-          <WorkoutDate/>
+          <WorkoutDate date={date}/>
           <Col xs={24} style={stylesWorkoutColumn}>
             <Form.Item name={[workout.name, 'name']}>
-              <Input placeholder="Workout"/>
+              <Input placeholder="Video"/>
             </Form.Item>
             <Form.List name={[workout.name, 'groups']}>
-              {(groups, groupMeta) => (
+              {(groups, { add, remove }) => (
                 <Row gutter={[16, 16]}>
                   {groups.map((group: any, index: number) => (
                     <WorkoutGroup
                       key={index}
                       group={group}
                       onGroupChange={(updatedGroup: any) => {
-                        const updatedGroups = [...workout.workoutGroups];
+                        const updatedGroups = [...workout.groups];
                         updatedGroups[index] = updatedGroup;
-                        console.log({ ...workout, workoutGroups: updatedGroups });
                       }}
+                      remove={remove}
                     />
                   ))}
                   <Col xs={24}>
-                    <Button type="dashed" onClick={() => groupMeta.add()} block>
+                    <Button type="dashed" onClick={() => add()} block>
                       +
                     </Button>
                   </Col>
                 </Row>
               )}
             </Form.List>
-            <Form.Item noStyle shouldUpdate>
-              {() => (
-                <Typography>
-                  <pre>{JSON.stringify(form.getFieldsValue(), null, 2)}</pre>
-                </Typography>
-              )}
-            </Form.Item>
           </Col>
         </Row>
       </Form>
@@ -112,9 +107,10 @@ const Workout: React.FC<WorkoutProps> = ({ workout, onWorkoutChange }) => {
 interface WorkoutGroupProps {
   group: any;
   onGroupChange: (updatedGroup: any) => void;
+  remove: (index: number | number[]) => void;
 }
 
-const WorkoutGroup: React.FC<WorkoutGroupProps> = ({ group, onGroupChange }) => {
+const WorkoutGroup: React.FC<WorkoutGroupProps> = ({ group, onGroupChange, remove }) => {
   const {
     token: {
       borderRadiusLG,
@@ -148,17 +144,36 @@ const WorkoutGroup: React.FC<WorkoutGroupProps> = ({ group, onGroupChange }) => 
   return (
     <Col xs={24} key={group.key} style={stylesWorkoutGroup}>
       <Form form={form} name="groupForm">
-        <Row>
+        <Row gutter={[16, 16]}>
           <Col xs={24}>
-            <Form.Item
-              name={[group.name, 'title']}
-            >
+            <Row align="middle" justify="space-between">
+              <Col>
+                <Button size="small" type="text" style={{ touchAction: 'none', cursor: 'move' }}>
+                  <MenuOutlined/>
+                </Button>
+              </Col>
+              <Row>
+                <Col>
+                  <Button size="small" type="text">
+                    <CopyOutlined/>
+                  </Button>
+                </Col>
+                <Col>
+                  <Button size="small" type="text" onClick={remove}>
+                    <CloseOutlined/>
+                  </Button>
+                </Col>
+              </Row>
+            </Row>
+          </Col>
+          <Col xs={24}>
+            <Form.Item name={[group.name, 'title']} style={{ marginBottom: 0 }}>
               <Input placeholder="Group Title"/>
             </Form.Item>
           </Col>
           <Col xs={24}>
             <Form.List name={[group.name, 'blocks']}>
-              {(blocks, blockMeta) => (
+              {(blocks, { add, remove }) => (
                 <Row gutter={[0, 20]}>
                   {blocks.map((block: any, index: number) => (
                     // workout block
@@ -166,14 +181,15 @@ const WorkoutGroup: React.FC<WorkoutGroupProps> = ({ group, onGroupChange }) => 
                       key={index}
                       block={block}
                       onBlockChange={(updatedBlock: any) => {
-                        const updatedBlocks = [...group.workoutBlocks];
+                        const updatedBlocks = [...group.blocks];
                         updatedBlocks[index] = updatedBlock;
-                        handleGroupChange({ ...group, workoutBlocks: updatedBlocks });
+                        handleGroupChange({ ...group, blocks: blocks });
                       }}
+                      remove={remove}
                     />
                   ))}
                   <Col xs={24}>
-                    <Button type="dashed" onClick={() => blockMeta.add()} block>
+                    <Button type="dashed" onClick={() => add()} block>
                       +
                     </Button>
                   </Col>
@@ -181,18 +197,6 @@ const WorkoutGroup: React.FC<WorkoutGroupProps> = ({ group, onGroupChange }) => 
               )}
             </Form.List>
           </Col>
-          <Col xs={24}>
-            <Button type="link">
-              <CloseOutlined/>
-            </Button>
-          </Col>
-          <Form.Item noStyle shouldUpdate>
-            {() => (
-              <Typography>
-                <pre>{JSON.stringify(form.getFieldsValue(), null, 2)}</pre>
-              </Typography>
-            )}
-          </Form.Item>
         </Row>
       </Form>
     </Col>
@@ -202,9 +206,10 @@ const WorkoutGroup: React.FC<WorkoutGroupProps> = ({ group, onGroupChange }) => 
 interface WorkoutBlockProps {
   block: any;
   onBlockChange: (updatedBlock: any) => void;
+  remove: (index: number | number[]) => void;
 }
 
-const WorkoutBlock: React.FC<WorkoutBlockProps> = ({ block, onBlockChange }) => {
+const WorkoutBlock: React.FC<WorkoutBlockProps> = ({ block, onBlockChange, remove }) => {
   const {
     token: {
       colorBgContainer,
@@ -225,38 +230,110 @@ const WorkoutBlock: React.FC<WorkoutBlockProps> = ({ block, onBlockChange }) => 
   return (
     <Col xs={24} style={stylesWorkoutBlock}>
       <Form form={form} name="blockForm">
-        <Row>
+        <Row gutter={[16, 16]}>
           <Col xs={24}>
-            <Form.Item
-              name={[block.name, 'title']}
-            >
-              <Input placeholder="Block Title"/>
-            </Form.Item>
+            <Row align="middle" justify="space-between">
+              <Col>
+                <Button size="small" type="text" style={{ touchAction: 'none', cursor: 'move' }}>
+                  <MenuOutlined/>
+                </Button>
+              </Col>
+              <Row>
+                <Col>
+                  <Button size="small" type="text">
+                    <CopyOutlined/>
+                  </Button>
+                </Col>
+                <Col>
+                  <Button size="small" type="text" onClick={remove}>
+                    <CloseOutlined/>
+                  </Button>
+                </Col>
+              </Row>
+            </Row>
           </Col>
           <Col xs={24}>
-            <Form.Item name={[block.name, 'notes']} style={{ marginBottom: 0 }}>
-              <Input placeholder="Block Notes"/>
-            </Form.Item>
+            <Row gutter={[16, 8]}>
+              <Col xs={24}>
+                <Typography.Title level={5} style={{ marginBottom: 0 }}>
+                  Round #1
+                </Typography.Title>
+              </Col>
+              <Col xs={24}>
+                <Typography>
+                  Push ups, 3 sets x 20, 120s
+                </Typography>
+                <Typography>
+                  Push ups, 3 sets x 20, 120s
+                </Typography>
+                <Typography>
+                  Push ups, 3 sets x 20, 120s
+                </Typography>
+              </Col>
+              <Col>
+                <Typography>
+                  Just do it!
+                </Typography>
+              </Col>
+            </Row>
           </Col>
           <Col xs={24}>
-            <Button
-              type="link"
-            >
-              <CloseOutlined/>
-            </Button>
+            <WorkoutModal/>
           </Col>
-          <Form.Item noStyle shouldUpdate>
-            {() => (
-              <Typography>
-                <pre>{JSON.stringify(form.getFieldsValue(), null, 2)}</pre>
-              </Typography>
-            )}
-          </Form.Item>
         </Row>
       </Form>
     </Col>
   );
 };
+
+const WorkoutModal: React.FC = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
+  return (
+    <>
+      <Button type="dashed" onClick={showModal} block>
+        Edit Block
+      </Button>
+      <Modal title="Round #1" open={isModalOpen} onOk={handleOk} onCancel={handleCancel} width="960px">
+        <Form
+          layout="vertical"
+        >
+          <Row>
+            <Col span={24}>
+              <Form.Item
+                label="Title"
+                name={['block', 'title']}
+              >
+                <Input placeholder="1 Round"/>
+              </Form.Item>
+            </Col>
+            <Col span={24}>
+              <WorkoutTable/>
+            </Col>
+            <Col span={24}>
+              <Form.Item name={['block', 'notes']} label="Notes" style={{ marginBottom: 0 }}>
+                <Input.TextArea size="middle"/>
+              </Form.Item>
+            </Col>
+          </Row>
+        </Form>
+      </Modal>
+    </>
+  );
+};
+
 
 const Homepage: React.FC = () => {
   const {
@@ -270,75 +347,112 @@ const Homepage: React.FC = () => {
 
   const [formData, setFormData] = useState({
     workouts: [
-      { groups: [{ blocks: [{}] }] },
-      { groups: [{ blocks: [{}] }] },
-      { groups: [{ blocks: [{}] }] },
-      { groups: [{ blocks: [{}] }] },
-      { groups: [{ blocks: [{}] }] },
-      { groups: [{ blocks: [{}] }] },
-      { groups: [{ blocks: [{}] }] },
+      {
+        date: '18-02-2024',
+        groups: [{ blocks: [{}] }],
+      },
+      {
+        date: '19-02-2024',
+        groups: [{ blocks: [{}] }],
+      },
+      {
+        date: '20-02-2024',
+        groups: [{ blocks: [{}] }],
+      },
+      {
+        date: '21-02-2024',
+        groups: [{ blocks: [{}] }],
+      },
+      {
+        date: '22-02-2024',
+        groups: [{ blocks: [{}] }],
+      },
+      {
+        date: '23-02-2024',
+        groups: [{ blocks: [{}] }],
+      },
+      {
+        date: '24-02-2024',
+        groups: [{ blocks: [{}] }],
+      },
     ],
   });
 
-  const onFinish = (values: any) => {
-    console.log('Finish:', values);
-  };
+  const [date, setDate] = useState(dayjs());
+
+  const goToPreviousWeek = () => setDate(date.subtract(1, 'week'));
+
+  const goToNextWeek = () => setDate(date.add(1, 'week'));
 
   return (
-    <Form.Provider
-      onFormChange={(name, { forms, changedFields }) => {
-        if (name === 'workoutForm') {
-          console.log(changedFields);
-        }
-
-        if (name === 'groupForm') {
-          console.log('group form triggered');
-        }
-
-        if (name === 'blockForm') {
-          console.log('block form triggered');
-        }
-      }}
-    >
-      <Form
-        form={form}
-        onFinish={onFinish}
-        name="programForm"
-        autoComplete="off"
-        initialValues={formData}
-        onValuesChange={(changedValues, allValues) => {
-          setFormData(allValues);
-        }}
-      >
-        <Row gutter={[16, 24]}>
-          <Col span={24} style={{ padding: '16px 24px', background: colorBgContainer, borderRadius: borderRadiusLG }}>
-            <Form.List name="workouts">
-              {(workouts) => (
-                <Row justify="space-between">
-                  {workouts.map((workout, index) => (
-                    <Workout
-                      key={index}
-                      workout={workout}
-                      onWorkoutChange={(updatedWorkout) => {
-                        const updatedWorkouts = [...workouts];
-                        updatedWorkouts[index] = updatedWorkout;
-                      }}
-                    />
-                  ))}
-                </Row>
-              )}
-            </Form.List>
-            <Form.Item noStyle shouldUpdate>
-              {() => (
-                <Typography style={{ marginTop: '256px' }}>
-                  <pre>{JSON.stringify(form.getFieldsValue(), null, 2)}</pre>
-                </Typography>
-              )}
-            </Form.Item>
+    <Row gutter={[24, 24]}>
+      <Col lg={24}>
+        <Row justify="space-between" align="middle" gutter={[12, 16]}>
+          <Col>
+            <Button onClick={goToPreviousWeek}>Previous Week</Button>
+          </Col>
+          <Col>
+            <Typography.Title level={3}>
+              {date.startOf('week').format('MMMM D, YYYY')} - {date.endOf('week').format('MMMM D, YYYY')}
+            </Typography.Title>
+          </Col>
+          <Col>
+            <Button onClick={goToNextWeek}>Next Week</Button>
           </Col>
         </Row>
-      </Form>
-    </Form.Provider>
+      </Col>
+      <Col lg={24}>
+
+        <Form.Provider
+          onFormChange={(name, { forms, changedFields }) => {
+            if (name === 'workoutForm') {
+              console.log(changedFields);
+            }
+
+            if (name === 'groupForm') {
+              console.log('group form triggered');
+            }
+
+            if (name === 'blockForm') {
+              console.log('block form triggered');
+            }
+          }}
+        >
+          <Form
+            form={form}
+            name="programForm"
+            autoComplete="off"
+            initialValues={formData}
+            onValuesChange={(changedValues, allValues) => {
+              setFormData(allValues);
+            }}
+          >
+            <Row gutter={[16, 24]}>
+              <Col span={24}
+                   style={{ padding: '16px 24px', background: colorBgContainer, borderRadius: borderRadiusLG }}>
+                <Form.List name="workouts">
+                  {(workouts) => (
+                    <Row justify="space-between">
+                      {workouts.map((workout, index) => (
+                        <Workout
+                          key={index}
+                          date={date}
+                          workout={workout}
+                          onWorkoutChange={(updatedWorkout) => {
+                            const updatedWorkouts = [...workouts];
+                            updatedWorkouts[index] = updatedWorkout;
+                          }}
+                        />
+                      ))}
+                    </Row>
+                  )}
+                </Form.List>
+              </Col>
+            </Row>
+          </Form>
+        </Form.Provider>
+      </Col>
+    </Row>
   );
 };
 
