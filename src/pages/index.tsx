@@ -51,7 +51,7 @@ const Workout: React.FC<WorkoutProps> = ({ workout, date, onWorkoutChange }) => 
   const handleAddGroup = () => {
     const updatedWorkout = {
       ...workout,
-      groups: [...workout.grups, { title: '', blocks: [] }],
+      groups: [...workout.groups, { title: '', blocks: [] }],
     };
     onWorkoutChange(updatedWorkout);
   };
@@ -72,7 +72,7 @@ const Workout: React.FC<WorkoutProps> = ({ workout, date, onWorkoutChange }) => 
         <Row>
           <WorkoutDate date={date}/>
           <Col xs={24} style={stylesWorkoutColumn}>
-            <Form.Item name={[workout.name, 'name']}>
+            <Form.Item name={[workout.video, 'video']}>
               <Input placeholder="Video"/>
             </Form.Item>
             <Form.List name={[workout.name, 'groups']}>
@@ -365,7 +365,13 @@ const Homepage: React.FC = () => {
       },
       {
         date: '22-02-2024',
-        groups: [{ blocks: [{}] }],
+        video: 'https://...',
+        groups: [{
+          title: 'Hello, world!',
+          blocks: [{
+            title: 'Good bye!',
+          }]
+        }],
       },
       {
         date: '23-02-2024',
@@ -402,7 +408,6 @@ const Homepage: React.FC = () => {
         </Row>
       </Col>
       <Col lg={24}>
-
         <Form.Provider
           onFormChange={(name, { forms, changedFields }) => {
             if (name === 'workoutForm') {
