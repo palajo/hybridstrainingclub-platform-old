@@ -1,7 +1,12 @@
 import { Col, theme, Typography } from 'antd';
 import React from 'react';
+import { Dayjs } from 'dayjs';
 
-const WorkoutDate = ({ date }) => {
+interface WorkoutDateProps {
+  date: Dayjs;
+}
+
+const WorkoutDate: React.FC<WorkoutDateProps> = ({ date }) => {
   const {
     token: {
       colorBorder,

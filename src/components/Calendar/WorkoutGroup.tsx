@@ -1,28 +1,21 @@
 import React from 'react';
 import { Button, Col, Form, Input, Row, theme } from 'antd';
 import { CloseOutlined, CopyOutlined, MenuOutlined } from '@ant-design/icons';
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { closestCenter, DndContext, MouseSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
+import WorkoutBlock from '@/components/Calendar/WorkoutBlock';
 
-import WorkoutBlock from './WorkoutBlock';
-import { useSortable } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
-
-interface WorkoutGroupProps extends React.HTMLAttributes<HTMLTableRowElement> {
+interface WorkoutGroupProps {
   group: any;
   remove: (index: number | number[]) => void;
-  id: string;
-  'data-row-key': string;
+  workoutIndex: number;
+  groupIndex: number;
 }
 
-const WorkoutGroup: React.FC<WorkoutGroupProps> = ({ group, remove, ...props }) => {
-  const {
-    token: {
-      borderRadiusLG,
-      colorPrimaryBorder,
-      colorPrimaryBg,
-    },
-  } = theme.useToken();
+const WorkoutGroup: React.FC<WorkoutGroupProps> = ({ group, remove }) => {
+  const { token: { borderRadiusLG, colorPrimaryBorder, colorPrimaryBg } } = theme.useToken();
 
-  // styles
   const stylesWorkoutGroup: React.CSSProperties = {
     padding: '12px',
     borderLeft: `3px solid ${colorPrimaryBorder}`,
@@ -30,46 +23,24 @@ const WorkoutGroup: React.FC<WorkoutGroupProps> = ({ group, remove, ...props }) 
     borderRadius: borderRadiusLG,
   };
 
-  // drag-and-drop
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    setActivatorNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({
-    id: props['data-row-key'],
-  });
+  const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor));
 
-  const style: React.CSSProperties = {
-    ...props.style,
-    transform: CSS.Transform.toString(transform && { ...transform, scaleY: 1 }),
-    transition,
-    ...(isDragging ? { position: 'relative', zIndex: 98 } : {}),
+  const handleDragEnd = (event: any) => {
+    const { active, over } = event;
+
+    if (active.id !== over.id) {
+      console.log('Active Block ID:', active.id);
+      console.log('Over Block ID:', over.id);
+    }
   };
 
   return (
-    <Col
-      xs={24}
-      key={group.key}
-      style={{ ...style, ...stylesWorkoutGroup }}
-      {...props}
-      ref={setNodeRef}
-      {...attributes}
-    >
+    <Col xs={24} key={group.key} style={stylesWorkoutGroup}>
       <Row gutter={[16, 16]}>
         <Col xs={24}>
           <Row align="middle" justify="space-between">
             <Col>
-              <Button
-                size="small"
-                type="text"
-                ref={setActivatorNodeRef}
-                style={{ touchAction: 'none', cursor: 'move' }}
-                {...listeners}
-              >
+              <Button size="small" type="text" style={{ touchAction: 'none', cursor: 'move' }}>
                 <MenuOutlined/>
               </Button>
             </Col>
@@ -96,14 +67,21 @@ const WorkoutGroup: React.FC<WorkoutGroupProps> = ({ group, remove, ...props }) 
           <Form.List name={[group.name, 'blocks']}>
             {(blocks, { add, remove }) => (
               <Row gutter={[0, 20]}>
-                {blocks.map((block: any, index: number) => (
-                  // workout block
-                  <WorkoutBlock
-                    key={index}
-                    block={block}
-                    remove={remove}
-                  />
-                ))}
+                <DndContext
+                  sensors={sensors}
+                  collisionDetection={closestCenter}
+                  onDragEnd={handleDragEnd}
+                  modifiers={[restrictToVerticalAxis]}
+                >
+                  <SortableContext
+                    items={[...Array(blocks)].map((_, index) => {return { id: index } })}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    {blocks.map((block: any) => (
+                      <WorkoutBlock key={block.key} block={block} remove={remove}/>
+                    ))}
+                  </SortableContext>
+                </DndContext>
                 <Col xs={24}>
                   <Button type="dashed" onClick={() => add()} block>
                     +

@@ -4,7 +4,11 @@ import { Button, Col, Form, Input, Modal, Row } from 'antd';
 import WorkoutBlockModalTable from './WorkoutBlockModalTable';
 import { EditOutlined } from '@ant-design/icons';
 
-const WorkoutBlockModal: React.FC = ({ block }) => {
+interface WorkoutBlockModalProps {
+  block: any;
+}
+
+const WorkoutBlockModal: React.FC<WorkoutBlockModalProps> = ({ block }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const showModal = () => {

@@ -1,9 +1,14 @@
 import React, { useState } from 'react';
 import { Col, Form, Row, theme, Typography } from 'antd';
+import { Dayjs } from 'dayjs';
 
 import Workout from '@/components/Calendar/Workout';
 
-const Calendar = ({ date }) => {
+interface CalendarProps {
+  date: Dayjs;
+}
+
+const Calendar: React.FC<CalendarProps> = ({ date }) => {
   const {
     token: {
       colorBgContainer,
@@ -69,7 +74,12 @@ const Calendar = ({ date }) => {
             {(workouts) => (
               <Row justify="space-between">
                 {workouts.map((workout, index) => (
-                  <Workout key={index} date={date.startOf('week').add(index, 'day')} workout={workout}/>
+                  <Workout
+                    key={index}
+                    date={date.startOf('week').add(index, 'day')}
+                    workout={workout}
+                    workoutIndex={index}
+                  />
                 ))}
               </Row>
             )}
