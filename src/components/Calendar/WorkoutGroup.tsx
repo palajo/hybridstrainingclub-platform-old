@@ -1,19 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button, Col, Form, Input, Row, theme } from 'antd';
 import { CloseOutlined, CopyOutlined, MenuOutlined } from '@ant-design/icons';
-import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { closestCenter, DndContext, MouseSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
-import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
+import { Active, MouseSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
+
 import WorkoutBlock from '@/components/Calendar/WorkoutBlock';
 
 interface WorkoutGroupProps {
   group: any;
   remove: (index: number | number[]) => void;
+  add: (index: number | number[]) => void;
   workoutIndex: number;
   groupIndex: number;
 }
 
-const WorkoutGroup: React.FC<WorkoutGroupProps> = ({ group, remove }) => {
+const WorkoutGroup: React.FC<WorkoutGroupProps> = ({ group, add, remove, workoutIndex, groupIndex }) => {
   const { token: { borderRadiusLG, colorPrimaryBorder, colorPrimaryBg } } = theme.useToken();
 
   const stylesWorkoutGroup: React.CSSProperties = {
@@ -23,16 +23,9 @@ const WorkoutGroup: React.FC<WorkoutGroupProps> = ({ group, remove }) => {
     borderRadius: borderRadiusLG,
   };
 
-  const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor));
+  const form = Form.useFormInstance();
+  const fields = form.getFieldsValue([['workouts', workoutIndex]]).workouts[workoutIndex].groups[groupIndex];
 
-  const handleDragEnd = (event: any) => {
-    const { active, over } = event;
-
-    if (active.id !== over.id) {
-      console.log('Active Block ID:', active.id);
-      console.log('Over Block ID:', over.id);
-    }
-  };
 
   return (
     <Col xs={24} key={group.key} style={stylesWorkoutGroup}>
@@ -40,18 +33,18 @@ const WorkoutGroup: React.FC<WorkoutGroupProps> = ({ group, remove }) => {
         <Col xs={24}>
           <Row align="middle" justify="space-between">
             <Col>
-              <Button size="small" type="text" style={{ touchAction: 'none', cursor: 'move' }}>
+              <Button size="small" type="text" style={{ touchAction: 'none', cursor: 'grab' }}>
                 <MenuOutlined/>
               </Button>
             </Col>
             <Row>
               <Col>
-                <Button size="small" type="text">
+                <Button size="small" type="text" onClick={() => add(fields)}>
                   <CopyOutlined/>
                 </Button>
               </Col>
               <Col>
-                <Button size="small" type="text" onClick={() => remove(group.key)}>
+                <Button size="small" type="text" onClick={() => remove(groupIndex)}>
                   <CloseOutlined/>
                 </Button>
               </Col>
@@ -67,23 +60,18 @@ const WorkoutGroup: React.FC<WorkoutGroupProps> = ({ group, remove }) => {
           <Form.List name={[group.name, 'blocks']}>
             {(blocks, { add, remove }) => (
               <Row gutter={[0, 20]}>
-                <DndContext
-                  sensors={sensors}
-                  collisionDetection={closestCenter}
-                  onDragEnd={handleDragEnd}
-                  modifiers={[restrictToVerticalAxis]}
-                >
-                  <SortableContext
-                    items={[...Array(blocks)].map((_, index) => {return { id: index } })}
-                    strategy={verticalListSortingStrategy}
-                  >
-                    {blocks.map((block: any) => (
-                      <WorkoutBlock key={block.key} block={block} remove={remove}/>
-                    ))}
-                  </SortableContext>
-                </DndContext>
+                {blocks.map((block: any, blockIndex) => (
+                  <WorkoutBlock
+                    key={block.name}
+                    block={block}
+                    remove={remove}
+                    workoutIndex={workoutIndex}
+                    groupIndex={groupIndex}
+                    blockIndex={blockIndex}
+                  />
+                ))}
                 <Col xs={24}>
-                  <Button type="dashed" onClick={() => add()} block>
+                  <Button type="dashed" onClick={() => add({})} block>
                     +
                   </Button>
                 </Col>

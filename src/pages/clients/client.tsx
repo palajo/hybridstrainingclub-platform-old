@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Col, Row, theme, Typography } from 'antd';
+import { Button, Col, Row, Space, theme, Typography } from 'antd';
 import { MinusOutlined } from '@ant-design/icons';
 const { Title } = Typography;
 
@@ -16,7 +16,7 @@ const Client: React.FC = () => {
         <Row justify="space-between" align="middle">
           <Col>
             <Title level={2} style={{ marginBottom: 0 }}>
-              Client Name
+              Quentin Randis
             </Title>
           </Col>
           <Col>
@@ -28,19 +28,46 @@ const Client: React.FC = () => {
           </Col>
         </Row>
       </Col>
-      <Col span={24}
-           style={{ background: colorBgContainer, borderRadius: borderRadiusLG, padding: '0', overflow: 'hidden' }}>
-        <Row gutter={[0, 8]}>
-          <Col span={4}>
-            <Title level={5} style={{ marginBottom: 0, padding: '16px 24px' }}>
-              Navigation
-            </Title>
-            <ClientMenu/>
+      <Col span={24}>
+        <Row gutter={[24, 24]}>
+          <Col lg={12}>
+            <Space style={{ width: '100%', background: colorBgContainer, padding: '24px 36px', borderRadius: borderRadiusLG }}>
+              <Typography.Title level={4}>
+                General
+              </Typography.Title>
+            </Space>
           </Col>
-          <Col span={20} style={{ padding: '24px 36px' }}>
-            <Typography>
-              Hello, world!
-            </Typography>
+          <Col lg={12}>
+            <Row gutter={[16, 24]}>
+              <Col lg={24}>
+                <Space style={{ width: '100%', background: colorBgContainer, padding: '24px 36px', borderRadius: borderRadiusLG }}>
+                  <Typography.Title level={4}>
+                    History
+                  </Typography.Title>
+                </Space>
+              </Col>
+              <Col lg={24}>
+                <Space style={{ width: '100%', background: colorBgContainer, padding: '24px 36px', borderRadius: borderRadiusLG }}>
+                  <Typography.Title level={4}>
+                    Images
+                  </Typography.Title>
+                </Space>
+              </Col>
+              <Col lg={24}>
+                <Space style={{ width: '100%', background: colorBgContainer, padding: '24px 36px', borderRadius: borderRadiusLG }}>
+                  <Typography.Title level={4}>
+                    Measurements
+                  </Typography.Title>
+                </Space>
+              </Col>
+              <Col lg={24}>
+                <Space style={{ width: '100%', background: colorBgContainer, padding: '24px 36px', borderRadius: borderRadiusLG }}>
+                  <Typography.Title level={4}>
+                    Billing
+                  </Typography.Title>
+                </Space>
+              </Col>
+            </Row>
           </Col>
         </Row>
       </Col>

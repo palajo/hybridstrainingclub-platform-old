@@ -1,9 +1,8 @@
 import React from 'react';
-import { Button, Col, Form, Input, Row, theme } from 'antd';
+import { Button, Col, Form, Input, Row, theme, Typography } from 'antd';
 import { Dayjs } from 'dayjs';
 
 import WorkoutGroup from './WorkoutGroup';
-import WorkoutDate from './WorkoutDate';
 
 interface WorkoutProps {
   workout: any;
@@ -29,10 +28,22 @@ const Workout: React.FC<WorkoutProps> = ({ workout, date, workoutIndex }) => {
     padding: '24px 16px',
   };
 
+  const stylesWorkoutDate: React.CSSProperties = {
+    padding: '8px 16px',
+    borderBottom: `1px solid ${colorBorder}`,
+  };
+
   return (
     <Col style={stylesWorkout}>
       <Row>
-        <WorkoutDate date={date}/>
+        <Col xs={24} style={stylesWorkoutDate}>
+          <Typography.Title level={5} style={{ textAlign: 'center', marginBottom: '0' }}>
+            {date.format('dddd')}
+          </Typography.Title>
+          <Typography style={{ textAlign: 'center' }}>
+            {date.format('YYYY-MM-DD')}
+          </Typography>
+        </Col>
         <Col xs={24} style={stylesWorkoutColumn}>
           <Form.Item name={[workout.key, 'video']} initialValue={workout.video}>
             <Input placeholder="Video"/>
@@ -44,13 +55,14 @@ const Workout: React.FC<WorkoutProps> = ({ workout, date, workoutIndex }) => {
                   <WorkoutGroup
                     key={index}
                     group={group}
+                    add={add}
                     remove={remove}
                     workoutIndex={workoutIndex}
                     groupIndex={index}
                   />
                 ))}
                 <Col xs={24}>
-                  <Button type="dashed" onClick={() => add()} block>
+                  <Button type="dashed" onClick={() => add({})} block>
                     +
                   </Button>
                 </Col>
