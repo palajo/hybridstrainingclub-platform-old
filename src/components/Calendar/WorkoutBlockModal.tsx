@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button, Col, Form, Input, Modal, Row } from 'antd';
 import WorkoutTable from '@/components/Workout/WorkoutBuilder/WorkoutTable';
 
-const ModalBlock: React.FC = () => {
+const WorkoutBlockModal: React.FC = ({ block }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const showModal = () => {
@@ -19,10 +19,10 @@ const ModalBlock: React.FC = () => {
 
   return (
     <>
-      <Button size="small" type="default" onClick={showModal} style={{ width: '100%', margin: '16px 0 0' }}>
-        Edit
+      <Button type="dashed" onClick={showModal} block>
+        Edit Block
       </Button>
-      <Modal title="Basic Modal" open={isModalOpen} onOk={handleOk} onCancel={handleCancel} width="960px">
+      <Modal title="Round #1" open={isModalOpen} onOk={handleOk} onCancel={handleCancel} width="960px">
         <Form
           layout="vertical"
         >
@@ -30,7 +30,7 @@ const ModalBlock: React.FC = () => {
             <Col span={24}>
               <Form.Item
                 label="Title"
-                name={['block', 'title']}
+                name={[block.name, 'title']}
               >
                 <Input placeholder="1 Round"/>
               </Form.Item>
@@ -39,7 +39,7 @@ const ModalBlock: React.FC = () => {
               <WorkoutTable/>
             </Col>
             <Col span={24}>
-              <Form.Item name={['block', 'notes']} label="Notes" style={{ marginBottom: 0 }}>
+              <Form.Item name={[block.name, 'notes']} label="Notes" style={{ marginBottom: 0 }}>
                 <Input.TextArea size="middle"/>
               </Form.Item>
             </Col>
@@ -50,4 +50,4 @@ const ModalBlock: React.FC = () => {
   );
 };
 
-export default ModalBlock;
+export default WorkoutBlockModal;
