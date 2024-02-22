@@ -4,6 +4,22 @@ import { CloseOutlined, CopyOutlined, MenuOutlined } from '@ant-design/icons';
 import WorkoutTable from '@/components/Workout/WorkoutBuilder/WorkoutTable';
 import dayjs from 'dayjs';
 
+interface WorkoutProps {
+  workout: any;
+  date: any;
+  key: number;
+}
+
+interface WorkoutGroupProps {
+  group: any;
+  remove: (index: number | number[]) => void;
+}
+
+interface WorkoutBlockProps {
+  block: any;
+  remove: (index: number | number[]) => void;
+}
+
 const WorkoutDate = ({ date }) => {
   const {
     token: {
@@ -28,14 +44,7 @@ const WorkoutDate = ({ date }) => {
   );
 };
 
-interface WorkoutProps {
-  workout: any;
-  onWorkoutChange: (updatedWorkout: any) => void;
-  date: string;
-  key: string;
-}
-
-const Workout: React.FC<WorkoutProps> = ({ workout, date, onWorkoutChange }) => {
+const Workout: React.FC<WorkoutProps> = ({ workout, date }) => {
   const {
     token: {
       colorBorder,
@@ -43,18 +52,6 @@ const Workout: React.FC<WorkoutProps> = ({ workout, date, onWorkoutChange }) => 
   } = theme.useToken();
 
   const [form] = Form.useForm();
-
-  const handleWorkoutChange = (updatedWorkout: any) => {
-    onWorkoutChange(updatedWorkout);
-  };
-
-  const handleAddGroup = () => {
-    const updatedWorkout = {
-      ...workout,
-      groups: [...workout.groups, { title: '', blocks: [] }],
-    };
-    onWorkoutChange(updatedWorkout);
-  };
 
   const stylesWorkout: React.CSSProperties = {
     width: 'calc(100% / 7)',
@@ -68,49 +65,37 @@ const Workout: React.FC<WorkoutProps> = ({ workout, date, onWorkoutChange }) => 
 
   return (
     <Col style={stylesWorkout}>
-      <Form form={form} name="workoutForm">
-        <Row>
-          <WorkoutDate date={date}/>
-          <Col xs={24} style={stylesWorkoutColumn}>
-            <Form.Item name={[workout.video, 'video']}>
-              <Input placeholder="Video"/>
-            </Form.Item>
-            <Form.List name={[workout.name, 'groups']}>
-              {(groups, { add, remove }) => (
-                <Row gutter={[16, 16]}>
-                  {groups.map((group: any, index: number) => (
-                    <WorkoutGroup
-                      key={index}
-                      group={group}
-                      onGroupChange={(updatedGroup: any) => {
-                        const updatedGroups = [...workout.groups];
-                        updatedGroups[index] = updatedGroup;
-                      }}
-                      remove={remove}
-                    />
-                  ))}
-                  <Col xs={24}>
-                    <Button type="dashed" onClick={() => add()} block>
-                      +
-                    </Button>
-                  </Col>
-                </Row>
-              )}
-            </Form.List>
-          </Col>
-        </Row>
-      </Form>
+      <Row>
+        <WorkoutDate date={date}/>
+        <Col xs={24} style={stylesWorkoutColumn}>
+          <Form.Item name={[workout.key, 'video']} initialValue={workout.video}>
+            <Input placeholder="Video" />
+          </Form.Item>
+          <Form.List name={[workout.name, 'groups']}>
+            {(groups, { add, remove }) => (
+              <Row gutter={[16, 16]}>
+                {groups.length > 0 && groups.map((group: any, index: number) => (
+                  <WorkoutGroup
+                    key={index}
+                    group={group}
+                    remove={remove}
+                  />
+                ))}
+                <Col xs={24}>
+                  <Button type="dashed" onClick={() => add()} block>
+                    +
+                  </Button>
+                </Col>
+              </Row>
+            )}
+          </Form.List>
+        </Col>
+      </Row>
     </Col>
   );
 };
 
-interface WorkoutGroupProps {
-  group: any;
-  onGroupChange: (updatedGroup: any) => void;
-  remove: (index: number | number[]) => void;
-}
-
-const WorkoutGroup: React.FC<WorkoutGroupProps> = ({ group, onGroupChange, remove }) => {
+const WorkoutGroup: React.FC<WorkoutGroupProps> = ({ group, remove }) => {
   const {
     token: {
       borderRadiusLG,
@@ -118,18 +103,6 @@ const WorkoutGroup: React.FC<WorkoutGroupProps> = ({ group, onGroupChange, remov
       colorPrimaryBg,
     },
   } = theme.useToken();
-
-  const handleGroupChange = (updatedGroup: any) => {
-    onGroupChange(updatedGroup);
-  };
-
-  const handleAddBlock = () => {
-    const updatedGroup = {
-      ...group,
-      blocks: [...group.blocks, { title: '', notes: '', exercises: [] }],
-    };
-    handleGroupChange(updatedGroup);
-  };
 
   const [form] = Form.useForm();
 
@@ -143,71 +116,58 @@ const WorkoutGroup: React.FC<WorkoutGroupProps> = ({ group, onGroupChange, remov
 
   return (
     <Col xs={24} key={group.key} style={stylesWorkoutGroup}>
-      <Form form={form} name="groupForm">
-        <Row gutter={[16, 16]}>
-          <Col xs={24}>
-            <Row align="middle" justify="space-between">
+      <Row gutter={[16, 16]}>
+        <Col xs={24}>
+          <Row align="middle" justify="space-between">
+            <Col>
+              <Button size="small" type="text" style={{ touchAction: 'none', cursor: 'move' }}>
+                <MenuOutlined/>
+              </Button>
+            </Col>
+            <Row>
               <Col>
-                <Button size="small" type="text" style={{ touchAction: 'none', cursor: 'move' }}>
-                  <MenuOutlined/>
+                <Button size="small" type="text">
+                  <CopyOutlined/>
                 </Button>
               </Col>
-              <Row>
-                <Col>
-                  <Button size="small" type="text">
-                    <CopyOutlined/>
-                  </Button>
-                </Col>
-                <Col>
-                  <Button size="small" type="text" onClick={remove}>
-                    <CloseOutlined/>
+              <Col>
+                <Button size="small" type="text" onClick={() => remove(group.key)}>
+                  <CloseOutlined/>
+                </Button>
+              </Col>
+            </Row>
+          </Row>
+        </Col>
+        <Col xs={24}>
+          <Form.Item name={[group.name, 'title']} style={{ marginBottom: 0 }}>
+            <Input placeholder="Group Title"/>
+          </Form.Item>
+        </Col>
+        <Col xs={24}>
+          <Form.List name={[group.name, 'blocks']}>
+            {(blocks, { add, remove }) => (
+              <Row gutter={[0, 20]}>
+                {blocks.map((block: any, index: number) => (
+                  // workout block
+                  <WorkoutBlock
+                    key={index}
+                    block={block}
+                    remove={remove}
+                  />
+                ))}
+                <Col xs={24}>
+                  <Button type="dashed" onClick={() => add()} block>
+                    +
                   </Button>
                 </Col>
               </Row>
-            </Row>
-          </Col>
-          <Col xs={24}>
-            <Form.Item name={[group.name, 'title']} style={{ marginBottom: 0 }}>
-              <Input placeholder="Group Title"/>
-            </Form.Item>
-          </Col>
-          <Col xs={24}>
-            <Form.List name={[group.name, 'blocks']}>
-              {(blocks, { add, remove }) => (
-                <Row gutter={[0, 20]}>
-                  {blocks.map((block: any, index: number) => (
-                    // workout block
-                    <WorkoutBlock
-                      key={index}
-                      block={block}
-                      onBlockChange={(updatedBlock: any) => {
-                        const updatedBlocks = [...group.blocks];
-                        updatedBlocks[index] = updatedBlock;
-                        handleGroupChange({ ...group, blocks: blocks });
-                      }}
-                      remove={remove}
-                    />
-                  ))}
-                  <Col xs={24}>
-                    <Button type="dashed" onClick={() => add()} block>
-                      +
-                    </Button>
-                  </Col>
-                </Row>
-              )}
-            </Form.List>
-          </Col>
-        </Row>
-      </Form>
+            )}
+          </Form.List>
+        </Col>
+      </Row>
     </Col>
   );
 };
-
-interface WorkoutBlockProps {
-  block: any;
-  onBlockChange: (updatedBlock: any) => void;
-  remove: (index: number | number[]) => void;
-}
 
 const WorkoutBlock: React.FC<WorkoutBlockProps> = ({ block, onBlockChange, remove }) => {
   const {
@@ -229,59 +189,57 @@ const WorkoutBlock: React.FC<WorkoutBlockProps> = ({ block, onBlockChange, remov
 
   return (
     <Col xs={24} style={stylesWorkoutBlock}>
-      <Form form={form} name="blockForm">
-        <Row gutter={[16, 16]}>
-          <Col xs={24}>
-            <Row align="middle" justify="space-between">
+      <Row gutter={[16, 16]}>
+        <Col xs={24}>
+          <Row align="middle" justify="space-between">
+            <Col>
+              <Button size="small" type="text" style={{ touchAction: 'none', cursor: 'move' }}>
+                <MenuOutlined/>
+              </Button>
+            </Col>
+            <Row>
               <Col>
-                <Button size="small" type="text" style={{ touchAction: 'none', cursor: 'move' }}>
-                  <MenuOutlined/>
+                <Button size="small" type="text">
+                  <CopyOutlined/>
                 </Button>
               </Col>
-              <Row>
-                <Col>
-                  <Button size="small" type="text">
-                    <CopyOutlined/>
-                  </Button>
-                </Col>
-                <Col>
-                  <Button size="small" type="text" onClick={remove}>
-                    <CloseOutlined/>
-                  </Button>
-                </Col>
-              </Row>
-            </Row>
-          </Col>
-          <Col xs={24}>
-            <Row gutter={[16, 8]}>
-              <Col xs={24}>
-                <Typography.Title level={5} style={{ marginBottom: 0 }}>
-                  Round #1
-                </Typography.Title>
-              </Col>
-              <Col xs={24}>
-                <Typography>
-                  Push ups, 3 sets x 20, 120s
-                </Typography>
-                <Typography>
-                  Push ups, 3 sets x 20, 120s
-                </Typography>
-                <Typography>
-                  Push ups, 3 sets x 20, 120s
-                </Typography>
-              </Col>
               <Col>
-                <Typography>
-                  Just do it!
-                </Typography>
+                <Button size="small" type="text" onClick={() => remove(block.key)}>
+                  <CloseOutlined/>
+                </Button>
               </Col>
             </Row>
-          </Col>
-          <Col xs={24}>
-            <WorkoutModal/>
-          </Col>
-        </Row>
-      </Form>
+          </Row>
+        </Col>
+        <Col xs={24}>
+          <Row gutter={[16, 8]}>
+            <Col xs={24}>
+              <Typography.Title level={5} style={{ marginBottom: 0 }}>
+                Round #1
+              </Typography.Title>
+            </Col>
+            <Col xs={24}>
+              <Typography>
+                Push ups, 3 sets x 20, 120s
+              </Typography>
+              <Typography>
+                Push ups, 3 sets x 20, 120s
+              </Typography>
+              <Typography>
+                Push ups, 3 sets x 20, 120s
+              </Typography>
+            </Col>
+            <Col>
+              <Typography>
+                Just do it!
+              </Typography>
+            </Col>
+          </Row>
+        </Col>
+        <Col xs={24}>
+          <WorkoutModal/>
+        </Col>
+      </Row>
     </Col>
   );
 };
@@ -334,7 +292,6 @@ const WorkoutModal: React.FC = () => {
   );
 };
 
-
 const Homepage: React.FC = () => {
   const {
     token: {
@@ -349,19 +306,19 @@ const Homepage: React.FC = () => {
     workouts: [
       {
         date: '18-02-2024',
-        groups: [{ blocks: [{}] }],
+        groups: [],
       },
       {
         date: '19-02-2024',
-        groups: [{ blocks: [{}] }],
+        groups: [],
       },
       {
         date: '20-02-2024',
-        groups: [{ blocks: [{}] }],
+        groups: [],
       },
       {
         date: '21-02-2024',
-        groups: [{ blocks: [{}] }],
+        groups: [],
       },
       {
         date: '22-02-2024',
@@ -370,16 +327,16 @@ const Homepage: React.FC = () => {
           title: 'Hello, world!',
           blocks: [{
             title: 'Good bye!',
-          }]
+          }],
         }],
       },
       {
         date: '23-02-2024',
-        groups: [{ blocks: [{}] }],
+        groups: [],
       },
       {
         date: '24-02-2024',
-        groups: [{ blocks: [{}] }],
+        groups: [],
       },
     ],
   });
@@ -408,54 +365,37 @@ const Homepage: React.FC = () => {
         </Row>
       </Col>
       <Col lg={24}>
-        <Form.Provider
-          onFormChange={(name, { forms, changedFields }) => {
-            if (name === 'workoutForm') {
-              console.log(changedFields);
-            }
-
-            if (name === 'groupForm') {
-              console.log('group form triggered');
-            }
-
-            if (name === 'blockForm') {
-              console.log('block form triggered');
-            }
+        <Form
+          form={form}
+          name="programForm"
+          autoComplete="off"
+          initialValues={formData}
+          onValuesChange={(changedValues, allValues) => {
+            setFormData(allValues);
           }}
         >
-          <Form
-            form={form}
-            name="programForm"
-            autoComplete="off"
-            initialValues={formData}
-            onValuesChange={(changedValues, allValues) => {
-              setFormData(allValues);
-            }}
-          >
-            <Row gutter={[16, 24]}>
-              <Col span={24}
-                   style={{ padding: '16px 24px', background: colorBgContainer, borderRadius: borderRadiusLG }}>
-                <Form.List name="workouts">
-                  {(workouts) => (
-                    <Row justify="space-between">
-                      {workouts.map((workout, index) => (
-                        <Workout
-                          key={index}
-                          date={date}
-                          workout={workout}
-                          onWorkoutChange={(updatedWorkout) => {
-                            const updatedWorkouts = [...workouts];
-                            updatedWorkouts[index] = updatedWorkout;
-                          }}
-                        />
-                      ))}
-                    </Row>
-                  )}
-                </Form.List>
-              </Col>
-            </Row>
-          </Form>
-        </Form.Provider>
+          <Row gutter={[16, 24]}>
+            <Col span={24}
+                 style={{ padding: '16px 24px', background: colorBgContainer, borderRadius: borderRadiusLG }}>
+              <Form.List name="workouts">
+                {(workouts) => (
+                  <Row justify="space-between">
+                    {workouts.map((workout, index) => (
+                      <Workout key={index} date={date} workout={workout}/>
+                    ))}
+                  </Row>
+                )}
+              </Form.List>
+              <Form.Item noStyle shouldUpdate>
+                {() => (
+                  <Typography>
+                    <pre>{JSON.stringify(form.getFieldsValue(), null, 2)}</pre>
+                  </Typography>
+                )}
+              </Form.Item>
+            </Col>
+          </Row>
+        </Form>
       </Col>
     </Row>
   );
