@@ -1,16 +1,19 @@
-import React, { CSSProperties, useMemo } from 'react';
+import React from 'react';
 import { Button, Col, Form, Input, Row, theme } from 'antd';
 import { CloseOutlined, CopyOutlined, MenuOutlined } from '@ant-design/icons';
-import WorkoutBlock from '@/components/Calendar/WorkoutBlock';
-import { useSortable } from '@dnd-kit/sortable';
 
-interface WorkoutGroupProps {
+import WorkoutBlock from './WorkoutBlock';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+
+interface WorkoutGroupProps extends React.HTMLAttributes<HTMLTableRowElement> {
   group: any;
   remove: (index: number | number[]) => void;
   id: string;
+  'data-row-key': string;
 }
 
-const WorkoutGroup: React.FC<WorkoutGroupProps> = ({ group, remove, id }) => {
+const WorkoutGroup: React.FC<WorkoutGroupProps> = ({ group, remove, ...props }) => {
   const {
     token: {
       borderRadiusLG,
@@ -18,8 +21,6 @@ const WorkoutGroup: React.FC<WorkoutGroupProps> = ({ group, remove, id }) => {
       colorPrimaryBg,
     },
   } = theme.useToken();
-
-  const [form] = Form.useForm();
 
   // styles
   const stylesWorkoutGroup: React.CSSProperties = {
@@ -29,13 +30,46 @@ const WorkoutGroup: React.FC<WorkoutGroupProps> = ({ group, remove, id }) => {
     borderRadius: borderRadiusLG,
   };
 
+  // drag-and-drop
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    setActivatorNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: props['data-row-key'],
+  });
+
+  const style: React.CSSProperties = {
+    ...props.style,
+    transform: CSS.Transform.toString(transform && { ...transform, scaleY: 1 }),
+    transition,
+    ...(isDragging ? { position: 'relative', zIndex: 98 } : {}),
+  };
+
   return (
-    <Col xs={24} key={group.key} style={stylesWorkoutGroup}>
+    <Col
+      xs={24}
+      key={group.key}
+      style={{ ...style, ...stylesWorkoutGroup }}
+      {...props}
+      ref={setNodeRef}
+      {...attributes}
+    >
       <Row gutter={[16, 16]}>
         <Col xs={24}>
           <Row align="middle" justify="space-between">
             <Col>
-              <Button size="small" type="text" style={{ touchAction: 'none', cursor: 'move' }}>
+              <Button
+                size="small"
+                type="text"
+                ref={setActivatorNodeRef}
+                style={{ touchAction: 'none', cursor: 'move' }}
+                {...listeners}
+              >
                 <MenuOutlined/>
               </Button>
             </Col>

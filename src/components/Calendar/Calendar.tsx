@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Col, Form, Row, theme, Typography } from 'antd';
-import dayjs from 'dayjs';
 
 import Workout from '@/components/Calendar/Workout';
 

@@ -1,8 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button, Col, Form, Input, Row, theme } from 'antd';
 
-import WorkoutGroup from '@/components/Calendar/WorkoutGroup';
-import WorkoutDate from '@/components/Calendar/WorkoutDate';
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
+import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { DndContext, DragEndEvent } from '@dnd-kit/core';
+
+import WorkoutGroup from './WorkoutGroup';
+import WorkoutDate from './WorkoutDate';
 
 interface WorkoutProps {
   workout: any;
@@ -27,6 +31,18 @@ const Workout: React.FC<WorkoutProps> = ({ workout, date }) => {
     padding: '24px 16px',
   };
 
+  const [data, setData] = useState([]);
+
+  const onDragEnd = ({ active, over }: DragEndEvent) => {
+    if (active.id !== over?.id) {
+      setData((previous) => {
+        const activeIndex = previous.findIndex((i) => i.key === active.id);
+        const overIndex = previous.findIndex((i) => i.key === over?.id);
+        return arrayMove(previous, activeIndex, overIndex);
+      });
+    }
+  };
+
   return (
     <Col style={stylesWorkout}>
       <Row>
@@ -37,20 +53,27 @@ const Workout: React.FC<WorkoutProps> = ({ workout, date }) => {
           </Form.Item>
           <Form.List name={[workout.name, 'groups']}>
             {(groups, { add, remove }) => (
-              <Row gutter={[16, 16]}>
-                {groups.map((group: any, index: number) => (
-                  <WorkoutGroup
-                    key={index}
-                    group={group}
-                    remove={remove}
-                  />
-                ))}
-                <Col xs={24}>
-                  <Button type="dashed" onClick={() => add()} block>
-                    +
-                  </Button>
-                </Col>
-              </Row>
+              <DndContext modifiers={[restrictToVerticalAxis]} onDragEnd={onDragEnd}>
+                <SortableContext
+                  items={groups.map((i) => i.key)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  <Row gutter={[16, 16]}>
+                    {groups.map((group: any, index: number) => (
+                      <WorkoutGroup
+                        key={index}
+                        group={group}
+                        remove={remove}
+                      />
+                    ))}
+                    <Col xs={24}>
+                      <Button type="dashed" onClick={() => add()} block>
+                        +
+                      </Button>
+                    </Col>
+                  </Row>
+                </SortableContext>
+              </DndContext>
             )}
           </Form.List>
         </Col>

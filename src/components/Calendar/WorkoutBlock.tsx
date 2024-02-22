@@ -1,7 +1,8 @@
 import React from 'react';
 import { Button, Col, Form, Row, theme, Typography } from 'antd';
-import { CloseOutlined, CopyOutlined, MenuOutlined } from '@ant-design/icons';
-import WorkoutBlockModal from '@/components/Calendar/WorkoutBlockModal';
+import { CloseOutlined, CopyOutlined, EditOutlined, MenuOutlined } from '@ant-design/icons';
+
+import WorkoutBlockModal from './WorkoutBlockModal';
 
 interface WorkoutBlockProps {
   block: any;
@@ -16,8 +17,6 @@ const WorkoutBlock: React.FC<WorkoutBlockProps> = ({ block, remove }) => {
       colorPrimaryBorderHover,
     },
   } = theme.useToken();
-
-  const [form] = Form.useForm();
 
   const stylesWorkoutBlock: React.CSSProperties = {
     padding: '12px',
@@ -38,9 +37,7 @@ const WorkoutBlock: React.FC<WorkoutBlockProps> = ({ block, remove }) => {
             </Col>
             <Row>
               <Col>
-                <Button size="small" type="text">
-                  <CopyOutlined/>
-                </Button>
+                <WorkoutBlockModal block={block}/>
               </Col>
               <Col>
                 <Button size="small" type="text" onClick={() => remove(block.key)}>
@@ -54,7 +51,7 @@ const WorkoutBlock: React.FC<WorkoutBlockProps> = ({ block, remove }) => {
           <Row gutter={[16, 8]}>
             <Col xs={24}>
               <Typography.Title level={5} style={{ marginBottom: 0 }}>
-                {block.name}
+                Block Title
               </Typography.Title>
             </Col>
             <Col xs={24}>
@@ -76,7 +73,6 @@ const WorkoutBlock: React.FC<WorkoutBlockProps> = ({ block, remove }) => {
           </Row>
         </Col>
         <Col xs={24}>
-          <WorkoutBlockModal block={block}/>
         </Col>
       </Row>
     </Col>
