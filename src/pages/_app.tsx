@@ -14,6 +14,9 @@ const App = ({ Component, pageProps }: AppProps) => {
           colorPrimary: '#17E4B1',
         },
         components: {
+          Typography: {
+            colorTextHeading: '#FFFFFF'
+          },
           Button: {
             colorPrimary: '#17E4B1',
           },
