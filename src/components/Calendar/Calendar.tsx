@@ -84,17 +84,10 @@ const Calendar: React.FC<CalendarProps> = ({ date }) => {
               </Row>
             )}
           </Form.List>
-          <Form.Item noStyle shouldUpdate>
-            {() => (
-              <Typography>
-                <pre>{JSON.stringify(form.getFieldsValue(), null, 2)}</pre>
-              </Typography>
-            )}
-          </Form.Item>
         </Col>
       </Row>
     </Form>
   );
-}
+};
 
 export default Calendar;

@@ -19,7 +19,7 @@ const { Title } = Typography;
 
 const ProgramContext = React.createContext<FormInstance<any> | null>(null);
 
-const Workout: React.FC = () => {
+const Group: React.FC = () => {
   const [form] = Form.useForm();
 
   const {
@@ -101,4 +101,4 @@ const Workout: React.FC = () => {
   );
 };
 
-export default Workout;
+export default Group;

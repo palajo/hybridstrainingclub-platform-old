@@ -31,6 +31,29 @@ const Homepage: React.FC = () => {
       <Col lg={24}>
         <Calendar date={date}/>
       </Col>
+      <Col lg={24}>
+        <Row justify="space-between" align="middle">
+          <Col>
+            <Button type="dashed" onClick={() => alert('Select program')}>
+              Select program
+            </Button>
+          </Col>
+          <Col>
+            <Row justify="end" align="middle" gutter={[12, 16]}>
+              <Col>
+                <Button type="dashed" danger onClick={() => alert('Delete program')}>
+                  Delete
+                </Button>
+              </Col>
+              <Col>
+                <Button type="primary" onClick={() => alert('Save program')}>
+                  Save
+                </Button>
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+      </Col>
     </Row>
   );
 };

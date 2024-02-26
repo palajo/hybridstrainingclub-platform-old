@@ -21,7 +21,7 @@ const data = Array.from({ length: 24 }).map((_, i) => ({
     'We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure), to help people create their product prototypes beautifully and efficiently.',
 }));
 
-const Workouts: React.FC = () => {
+const Groups: React.FC = () => {
   const router = useRouter();
 
   const {
@@ -100,4 +100,4 @@ const Workouts: React.FC = () => {
   );
 };
 
-export default Workouts;
+export default Groups;

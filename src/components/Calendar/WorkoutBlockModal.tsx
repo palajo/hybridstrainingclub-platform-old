@@ -6,10 +6,13 @@ import { EditOutlined } from '@ant-design/icons';
 
 interface WorkoutBlockModalProps {
   block: any;
+  workoutIndex: number;
+  groupIndex: number;
+  blockIndex: number;
   handleUpdate: () => void;
 }
 
-const WorkoutBlockModal: React.FC<WorkoutBlockModalProps> = ({ block, handleUpdate }) => {
+const WorkoutBlockModal: React.FC<WorkoutBlockModalProps> = ({ block, handleUpdate, workoutIndex, groupIndex, blockIndex }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const form = Form.useFormInstance();
@@ -33,14 +36,23 @@ const WorkoutBlockModal: React.FC<WorkoutBlockModalProps> = ({ block, handleUpda
         <EditOutlined/>
       </Button>
       <Modal open={isModalOpen} onOk={handleOk} onCancel={handleCancel} width="960px">
-        <Row>
-          <Col span={24}>
+        <Row gutter={[16, 16]}>
+          <Col span={12}>
             <Form.Item
-              label="Title"
+              label="Format"
               name={[block.name, 'title']}
               labelCol={{ span: 24 }}
             >
               <Input placeholder="Block Title"/>
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item
+              label="Reps"
+              name={[block.name, 'reps']}
+              labelCol={{ span: 24 }}
+            >
+              <Input placeholder="Reps"/>
             </Form.Item>
           </Col>
           <Col span={24}>

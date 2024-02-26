@@ -1,8 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button, Col, Form, Input, Row, theme, Typography } from 'antd';
 import { Dayjs } from 'dayjs';
+import {
+  closestCenter,
+  DndContext,
+  DragOverlay,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 
-import WorkoutGroup from './WorkoutGroup';
+import WorkoutGroup, { WorkoutGroupPlaceholder } from './WorkoutGroup';
 
 interface WorkoutProps {
   workout: any;
@@ -21,7 +32,7 @@ const Workout: React.FC<WorkoutProps> = ({ workout, date, workoutIndex }) => {
   const stylesWorkout: React.CSSProperties = {
     width: 'calc(100% / 7)',
     border: `1px solid ${colorBorder}`,
-    borderRight: 0,
+    borderRight: `${workoutIndex !== 6 && '0'}`,
   };
 
   const stylesWorkoutColumn: React.CSSProperties = {
@@ -32,6 +43,13 @@ const Workout: React.FC<WorkoutProps> = ({ workout, date, workoutIndex }) => {
     padding: '8px 16px',
     borderBottom: `1px solid ${colorBorder}`,
   };
+
+  const [activeId, setActiveId] = useState<number | null>(null);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  );
 
   return (
     <Col style={stylesWorkout}>
@@ -49,18 +67,39 @@ const Workout: React.FC<WorkoutProps> = ({ workout, date, workoutIndex }) => {
             <Input placeholder="Video"/>
           </Form.Item>
           <Form.List name={[workout.name, 'groups']}>
-            {(groups, { add, remove }) => (
+            {(groups, { add, remove, move }) => (
               <Row gutter={[16, 16]}>
-                {groups.map((group: any, index: number) => (
-                  <WorkoutGroup
-                    key={index}
-                    group={group}
-                    add={add}
-                    remove={remove}
-                    workoutIndex={workoutIndex}
-                    groupIndex={index}
-                  />
-                ))}
+                <DndContext
+                  sensors={sensors}
+                  collisionDetection={closestCenter}
+                  onDragStart={(event) => setActiveId(event.active.id)}
+                  onDragEnd={(event) => {
+                    const { active, over } = event;
+                    const { id } = active;
+                    const { id: overId } = over || { id: null };
+
+                    move(id, overId);
+                  }}
+                  modifiers={[restrictToVerticalAxis]}
+                >
+                  <SortableContext items={groups} strategy={verticalListSortingStrategy}>
+                    {groups.map((group: any, groupIndex: number) => (
+                      <WorkoutGroup
+                        key={groupIndex}
+                        group={group}
+                        add={add}
+                        remove={remove}
+                        workoutIndex={workoutIndex}
+                        groupIndex={groupIndex}
+                      />
+                    ))}
+                  </SortableContext>
+                  <DragOverlay>
+                    {activeId && (
+                      <WorkoutGroupPlaceholder activeId={activeId}/>
+                    )}
+                  </DragOverlay>
+                </DndContext>
                 <Col xs={24}>
                   <Button type="dashed" onClick={() => add({})} block>
                     +

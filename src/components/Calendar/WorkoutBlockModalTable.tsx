@@ -213,12 +213,6 @@ const WorkoutBlockModalTable: React.FC<WorkoutBlockModalTableProps> = ({ exercis
       width: 100,
     },
     {
-      title: 'Rest',
-      dataIndex: 'rest',
-      editable: true,
-      width: 100,
-    },
-    {
       title: '',
       dataIndex: 'operation',
       // @ts-ignore
@@ -270,7 +264,6 @@ const WorkoutBlockModalTable: React.FC<WorkoutBlockModalTableProps> = ({ exercis
       videoLink: '–',
       sets: 0,
       reps: 0,
-      rest: 0,
     }
 
     setData(data => [...data, exerciseObject]);

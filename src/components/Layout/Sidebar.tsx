@@ -31,10 +31,9 @@ function getItem(
 }
 
 const items: MenuItem[] = [
-  getItem(<Link href="/" shallow={true}>Calendar</Link>, '/', <CalendarOutlined/>),
-  getItem('Workout Builder', 'programs-submenu', <SettingOutlined/>, [
-    getItem(<Link href="/programs" shallow={true}>Programs</Link>, '/programs', <OrderedListOutlined/>),
-    getItem(<Link href="/workouts" shallow={true}>Workouts</Link>, '/workouts', <ContainerOutlined/>),
+  getItem(<Link href="/" shallow={true}>Programs</Link>, '/', <CalendarOutlined/>),
+  getItem('Components', 'workouts-submenu', <SettingOutlined/>, [
+    getItem(<Link href="/groups" shallow={true}>Groups</Link>, '/groups', <ContainerOutlined/>),
     getItem(<Link href="/exercises" shallow={true}>Exercises</Link>, '/exercises', <AimOutlined/>),
   ]),
   getItem(<Link href="/clients" shallow={true}>Clients</Link>, '/clients', <UserOutlined/>),
