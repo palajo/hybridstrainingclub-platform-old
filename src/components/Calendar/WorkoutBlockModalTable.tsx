@@ -12,6 +12,10 @@ const EditableContext = React.createContext<FormInstance<any> | null>(null);
 type EditableTableProps = Parameters<typeof Table>[0];
 type ColumnTypes = Exclude<EditableTableProps['columns'], undefined>;
 
+interface TableRowProps extends React.HTMLAttributes<HTMLTableRowElement> {
+  'data-row-key': string;
+}
+
 interface Exercise {
   key: number;
   name: string;
@@ -26,10 +30,6 @@ interface WorkoutBlockModalTableProps {
   add: (defaultValue?: any, insertIndex?: number | undefined) => void;
   remove: (index: number | number[]) => void;
   exercises: FormListFieldData[];
-}
-
-interface TableRowProps extends React.HTMLAttributes<HTMLTableRowElement> {
-  'data-row-key': string;
 }
 
 const WorkoutTableRow = ({ children, ...props }: TableRowProps) => {

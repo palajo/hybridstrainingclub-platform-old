@@ -11,6 +11,7 @@ import {
 import Image from 'next/image';
 import Logo from '@/images/logo.png';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 const { Sider } = Layout;
 
@@ -40,9 +41,10 @@ const items: MenuItem[] = [
 ];
 
 const Sidebar: React.FC = () => {
+  const router = useRouter();
   const [collapsed, setCollapsed] = useState(true);
 
-  const [current, setCurrent] = useState('/');
+  const [current, setCurrent] = useState(router.pathname);
 
   const onClick: MenuProps['onClick'] = (e) => {
     setCurrent(e.key);

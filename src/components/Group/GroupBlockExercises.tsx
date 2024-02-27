@@ -1,18 +1,26 @@
 import React, { useState } from 'react';
-import { Button, Col, Row, Form, Input, InputNumber, Table, theme, Typography, Popconfirm } from 'antd';
-import { CloseOutlined, DeleteOutlined, EditOutlined, PlusOutlined, SaveOutlined } from '@ant-design/icons';
+import { Button, Form, GetRef, Input, InputNumber, Popconfirm, Table, theme } from 'antd';
+import { CloseOutlined, DeleteOutlined, EditOutlined, MenuOutlined, SaveOutlined } from '@ant-design/icons';
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
+import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { DndContext, DragEndEvent } from '@dnd-kit/core';
 import Link from 'next/link';
-import Head from 'next/head';
-import { SearchProps } from 'antd/es/input/Search';
+import { CSS } from '@dnd-kit/utilities';
 
-const { Search } = Input;
-const { Title } = Typography;
+type EditableTableProps = Parameters<typeof Table>[0];
+type ColumnTypes = Exclude<EditableTableProps['columns'], undefined>;
 
-interface Item {
-  key: string;
-  name: string;
-  age: number;
-  address: string;
+interface EditableRowProps extends React.HTMLAttributes<HTMLTableRowElement> {
+  'data-row-key': string;
+}
+
+interface Exercise {
+  key: number;
+  title: string;
+  category: string;
+  video: string;
+  sets: number;
+  reps: number;
 }
 
 interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
@@ -20,7 +28,7 @@ interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
   dataIndex: string;
   title: any;
   inputType: 'number' | 'text';
-  record: Item;
+  record: Exercise;
   index: number;
   children: React.ReactNode;
 }
@@ -59,7 +67,47 @@ const EditableCell: React.FC<EditableCellProps> = ({
   );
 };
 
-const Exercises: React.FC = () => {
+const EditableRow = ({ children, ...props }: EditableRowProps) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    setActivatorNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: props['data-row-key'],
+  });
+
+  const style: React.CSSProperties = {
+    ...props.style,
+    transform: CSS.Transform.toString(transform && { ...transform, scaleY: 1 }),
+    transition,
+    ...(isDragging ? { position: 'relative', zIndex: 9999 } : {}),
+  };
+
+  return (
+    <tr {...props} ref={setNodeRef} style={style} {...attributes}>
+      {React.Children.map(children, (child) => {
+        if ((child as React.ReactElement).key === 'sort') {
+          return React.cloneElement(child as React.ReactElement, {
+            children: (
+              <MenuOutlined
+                ref={setActivatorNodeRef}
+                style={{ touchAction: 'none', cursor: 'move' }}
+                {...listeners}
+              />
+            ),
+          });
+        }
+        return child;
+      })}
+    </tr>
+  );
+};
+
+const GroupBlockExercises: React.FC = () => {
   const {
     token: { colorBgContainer, borderRadiusLG, colorPrimary },
   } = theme.useToken();
@@ -95,9 +143,9 @@ const Exercises: React.FC = () => {
 
   const [editingKey, setEditingKey] = useState('');
 
-  const isEditing = (record: Item) => record.key === editingKey;
+  const isEditing = (record: Exercise) => record.key === editingKey;
 
-  const edit = (record: Partial<Item> & { key: React.Key }) => {
+  const edit = (record: Partial<Exercise> & { key: React.Key }) => {
     form.setFieldsValue({ name: '', age: '', address: '', ...record });
     setEditingKey(record.key);
   };
@@ -108,7 +156,7 @@ const Exercises: React.FC = () => {
 
   const save = async (key: React.Key) => {
     try {
-      const row = (await form.validateFields()) as Item;
+      const row = (await form.validateFields()) as Exercise;
 
       const newData = [...data];
       const index = newData.findIndex((item) => key === item.key);
@@ -147,14 +195,18 @@ const Exercises: React.FC = () => {
       title: '',
       category: '',
       video: '',
-    }
+    };
 
     setData(data => [...data, exerciseObject]);
     setEditingKey(exerciseObject.key);
-  }
+  };
 
-
-  const columns = [
+  const columns: (ColumnTypes[number] & { editable?: boolean; dataIndex: string })[] = [
+    {
+      key: 'sort',
+      dataIndex: 'sort',
+      width: 24,
+    },
     {
       title: 'Exercise',
       dataIndex: 'title',
@@ -174,9 +226,19 @@ const Exercises: React.FC = () => {
       editable: true,
     },
     {
+      title: 'Sets',
+      dataIndex: 'sets',
+      editable: true,
+    },
+    {
+      title: 'Reps',
+      dataIndex: 'reps',
+      editable: true,
+    },
+    {
       title: 'Actions',
       dataIndex: 'actions',
-      render: (_: any, record: Item) => {
+      render: (_: any, record: Exercise) => {
         const editable = isEditing(record);
         return editable ? (
           <>
@@ -229,7 +291,7 @@ const Exercises: React.FC = () => {
     }
     return {
       ...col,
-      onCell: (record: Item) => ({
+      onCell: (record: Exercise) => ({
         record,
         inputType: col.dataIndex === 'age' ? 'number' : 'text',
         dataIndex: col.dataIndex,
@@ -239,98 +301,49 @@ const Exercises: React.FC = () => {
     };
   });
 
-  const onSearch: SearchProps['onSearch'] = (value, _e, info) => {
-    console.log(info?.source, value);
+  const onDragEnd = ({ active, over }: DragEndEvent) => {
+    if (active.id !== over?.id) {
+      setData((previous) => {
+        const activeIndex = previous.findIndex((i) => i.key === active.id);
+        const overIndex = previous.findIndex((i) => i.key === over?.id);
+        return arrayMove(previous, activeIndex, overIndex);
+      });
+    }
   };
-
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-
-  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    console.log('selectedRowKeys changed: ', newSelectedRowKeys);
-    setSelectedRowKeys(newSelectedRowKeys);
-  };
-
-  const rowSelection = {
-    selectedRowKeys,
-    onChange: onSelectChange,
-  };
-  const hasSelected = selectedRowKeys.length > 0;
 
   return (
-    <>
-      <Head>
-        <title>Exercises – HTC Platform</title>
-      </Head>
-      <Row gutter={[16, 24]}>
-        <Col span={24}>
-          <Row justify="space-between" align="middle">
-            <Col>
-              <Title level={2} style={{ marginBottom: 0 }}>
-                Exercises
-              </Title>
-            </Col>
-            <Col>
-              <Row gutter={[12, 12]}>
-                <Col>
-                  <Search placeholder="Search.." allowClear onSearch={onSearch} style={{ width: 320 }}/>
-                </Col>
-              </Row>
-            </Col>
-          </Row>
-        </Col>
-        <Col span={24} style={{ padding: '16px 24px', background: colorBgContainer, borderRadius: borderRadiusLG }}>
-          <Form form={form} component={false}>
-            <Table
-              components={{
-                body: {
-                  cell: EditableCell,
-                },
-              }}
-              rowSelection={{
-                type: 'checkbox',
-                ...rowSelection,
-              }}
-              bordered
-              dataSource={data}
-              columns={mergedColumns}
-              rowClassName="editable-row"
-              pagination={{
-                onChange: cancel,
-              }}
-              footer={() =>
-                <Button
-                  type="dashed"
-                  onClick={handleAddExercise}
-                  block
-                >
-                  + Add Exercise
-                </Button>
-              }
-            />
-            <Row align="middle" gutter={[16, 16]}>
-              <Col>
-                <Popconfirm title="Sure to delete?" onConfirm={() => alert('multiple delete handler')}>
-                  <Button
-                    type="primary"
-                    icon={<DeleteOutlined/>}
-                    danger
-                    disabled={!hasSelected}
-                  >
-                    Delete
-                  </Button>
-                </Popconfirm>
-              </Col>
-              <Col>
-                <Typography style={{ marginLeft: 8 }}>
-                  {hasSelected ? `Selected ${selectedRowKeys.length} items` : ''}
-                </Typography>
-              </Col>
-            </Row>
-          </Form>
-        </Col>
-      </Row>
-    </>
+    <Form form={form} component={false}>
+      <DndContext modifiers={[restrictToVerticalAxis]} onDragEnd={onDragEnd}>
+        <SortableContext
+          items={data.map((i) => i.key)}
+          strategy={verticalListSortingStrategy}
+        >
+          <Table
+            components={{
+              body: {
+                row: EditableRow,
+                cell: EditableCell,
+              },
+            }}
+            bordered
+            dataSource={data}
+            columns={mergedColumns}
+            rowClassName="editable-row"
+            pagination={false}
+            footer={() =>
+              <Button
+                type="dashed"
+                onClick={handleAddExercise}
+                block
+              >
+                + Add Exercise
+              </Button>
+            }
+          />
+        </SortableContext>
+      </DndContext>
+    </Form>
   );
 };
 
-export default Exercises;
+export default GroupBlockExercises;

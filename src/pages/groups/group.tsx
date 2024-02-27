@@ -1,46 +1,61 @@
 import React, { useState } from 'react';
-import {
-  Button,
-  Col,
-  DatePicker,
-  DatePickerProps,
-  Form,
-  FormInstance,
-  Input,
-  Row,
-  Tag,
-  theme,
-  Typography,
-} from 'antd';
-import { MinusOutlined } from '@ant-design/icons';
-import WorkoutGroup from '@/components/Workout/WorkoutBuilder/WorkoutGroup';
 import Head from 'next/head';
+import { Button, Col, Form, Input, Row, theme, Typography } from 'antd';
+import { DeleteOutlined, PlusOutlined, SaveOutlined } from '@ant-design/icons';
+import GroupBlock from '@/components/Group/GroupBlock';
+import { closestCenter, DndContext, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
+import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
 
 const { Title } = Typography;
 
-const ProgramContext = React.createContext<FormInstance<any> | null>(null);
-
 const Group: React.FC = () => {
-  const [form] = Form.useForm();
-
   const {
-    token: { colorBgContainer, colorBorder, borderRadiusLG, colorBgLayout },
+    token: {
+      borderRadiusLG,
+      colorPrimaryBorder,
+      colorPrimaryBorderHover,
+      colorBgContainer,
+      colorPrimaryBg,
+    },
   } = theme.useToken();
 
-  // date picker
-  const onChange: DatePickerProps['onChange'] = (date, dateString) => {
-    console.log(date, dateString);
+  const [form] = Form.useForm();
+
+  const [data, setData] = useState({
+    title: 'Hello, world!',
+    blocks: [
+      {
+        title: 'Good bye!',
+      }, {
+        title: 'Good bye!',
+      }, {
+        title: 'Good bye!',
+      }, {
+        title: 'Good bye!',
+      },
+    ],
+  });
+
+  const stylesWorkoutGroup: React.CSSProperties = {
+    padding: '24px 16px',
+    borderLeft: `3px solid ${colorPrimaryBorder}`,
+    background: colorPrimaryBg,
+    borderRadius: borderRadiusLG,
   };
 
-  // disable edit
-  const [componentDisabled, setComponentDisabled] = useState<boolean>(false);
+  const [activeId, setActiveId] = useState<number | null>(null);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  );
 
   return (
     <>
       <Head>
         <title>Warm up – #Group – HTC Platform</title>
       </Head>
-
       <Row gutter={[16, 24]}>
         <Col span={24}>
           <Row justify="space-between" align="middle">
@@ -48,60 +63,79 @@ const Group: React.FC = () => {
               <Row align="middle" gutter={[16, 16]}>
                 <Col>
                   <Title level={2} style={{ marginBottom: 0 }}>
-                    Prebuilt Workout #1
+                    {data.title}
                   </Title>
-                </Col>
-                <Col>
-                  <Tag color="red">Strength</Tag>
                 </Col>
               </Row>
             </Col>
             <Col>
               <Row gutter={[12, 12]}>
                 <Col>
-                  <Button type="primary" danger icon={<MinusOutlined/>}>Delete</Button>
+                  <Button type="dashed" danger icon={<DeleteOutlined/>}>Delete</Button>
+                </Col>
+                <Col>
+                  <Button type="primary" icon={<SaveOutlined/>}>Save</Button>
                 </Col>
               </Row>
             </Col>
           </Row>
         </Col>
-        <Col span={24}
-             style={{
-               background: colorBgContainer,
-               borderRadius: borderRadiusLG,
-               padding: '24px 36px',
-               overflow: 'hidden',
-             }}>
-          <Row gutter={[16, 24]}>
-            <Col span={24}>
-            </Col>
-            <Col span={24}>
-              <Form
-                form={form}
-                layout="vertical"
-                disabled={componentDisabled}
-              >
-                <Row gutter={[16, 0]}>
-                  <Col span={12}>
-                    <Form.Item label="Workout Date">
-                      <DatePicker onChange={onChange} style={{ width: '100%' }}/>
-                    </Form.Item>
-                  </Col>
-                  <Col span={12}>
-                    <Form.Item
-                      label="Video"
-                      name="InputNumber"
-                    >
-                      <Input placeholder="Vimeo link"/>
-                    </Form.Item>
-                  </Col>
-                  <Col span={24}>
-                    <WorkoutGroup/>
-                  </Col>
-                </Row>
-              </Form>
-            </Col>
-          </Row>
+        <Col
+          span={24}
+          style={stylesWorkoutGroup}
+        >
+          <Form
+            form={form}
+            name="programForm"
+            autoComplete="off"
+            initialValues={data}
+            onValuesChange={(changedValues, allValues) => {
+              setData(allValues);
+            }}
+          >
+            <Row>
+              <Col lg={24}>
+                <Form.Item name="title">
+                  <Input placeholder="Group Title"/>
+                </Form.Item>
+              </Col>
+              <Col xs={24}>
+                <Form.List name="blocks">
+                  {(blocks, { add, remove, move }) => (
+                    <Row gutter={[16, 16]}>
+                      <DndContext
+                        sensors={sensors}
+                        collisionDetection={closestCenter}
+                        onDragStart={(event) => setActiveId(event.active.id)}
+                        onDragEnd={(event) => {
+                          const { active, over } = event;
+                          const { id } = active;
+                          const { id: overId } = over || { id: null };
+
+                          move(id, overId);
+                        }}
+                        modifiers={[restrictToVerticalAxis]}
+                      >
+                        <SortableContext items={blocks} strategy={verticalListSortingStrategy}>
+                          {blocks.map((block: any, blockIndex) => (
+                            <GroupBlock
+                              key={block.name}
+                              block={block}
+                              remove={remove}
+                              blockIndex={blockIndex}
+                            />
+                          ))}
+                        </SortableContext>
+                      </DndContext>
+                      <Col lg={24}>
+                        <Button type="dashed" block onClick={() => add()} icon={<PlusOutlined/>}>Add Block</Button>
+                      </Col>
+                    </Row>
+                  )}
+                </Form.List>
+              </Col>
+            </Row>
+          </Form>
         </Col>
       </Row>
     </>
