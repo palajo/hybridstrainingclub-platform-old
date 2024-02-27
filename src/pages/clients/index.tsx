@@ -125,6 +125,7 @@ const Clients: React.FC = () => {
         </Col>
         <Col span={24} style={{ padding: '16px 24px', background: colorBgContainer, borderRadius: borderRadiusLG }}>
           <Table
+            bordered
             rowSelection={{
               ...rowSelection,
             }}
