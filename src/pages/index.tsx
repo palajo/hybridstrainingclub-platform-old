@@ -18,8 +18,6 @@ const Homepage: React.FC = () => {
     title: 'Program #1'
   });
 
-  console.log(program);
-
   return (
     <>
       <Head>

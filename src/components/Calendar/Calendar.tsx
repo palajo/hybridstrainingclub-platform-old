@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Col, Form, Row, theme, Typography } from 'antd';
+import React, { useEffect, useState, useMemo } from 'react';
+import { Col, Form, Row, theme } from 'antd';
 import { Dayjs } from 'dayjs';
 
 import Workout from '@/components/Calendar/Workout';
@@ -21,22 +21,6 @@ const Calendar: React.FC<CalendarProps> = ({ date }) => {
   const [formData, setFormData] = useState({
     workouts: [
       {
-        date: '18-02-2024',
-        groups: [],
-      },
-      {
-        date: '19-02-2024',
-        groups: [],
-      },
-      {
-        date: '20-02-2024',
-        groups: [],
-      },
-      {
-        date: '21-02-2024',
-        groups: [],
-      },
-      {
         date: '22-02-2024',
         video: 'https://...',
         groups: [{
@@ -46,26 +30,38 @@ const Calendar: React.FC<CalendarProps> = ({ date }) => {
           }],
         }],
       },
-      {
-        date: '23-02-2024',
-        groups: [],
-      },
-      {
-        date: '24-02-2024',
-        groups: [],
-      },
     ],
   });
+
+  const data = useMemo(() => {
+    const weekData = [];
+    const startDate = date.startOf('week');
+
+    for (let i = 0; i < 7; i++) {
+      const currentDate = startDate.add(i, 'day').format('DD-MM-YYYY');
+      const workout = formData.workouts.find(item => item.date === currentDate);
+
+      if (workout) {
+        weekData.push(workout);
+      } else {
+        weekData.push({ date: currentDate, groups: [] });
+      }
+    }
+
+    return weekData;
+  }, [formData, date]);
+
+  useEffect(() => {
+    form.setFieldsValue({ workouts: data });
+  }, [data, form]);
+
+  console.log(formData);
 
   return (
     <Form
       form={form}
       name="programForm"
       autoComplete="off"
-      initialValues={formData}
-      onValuesChange={(changedValues, allValues) => {
-        setFormData(allValues);
-      }}
     >
       <Row gutter={[16, 24]}>
         <Col span={24}

@@ -104,7 +104,7 @@ const Groups: React.FC = () => {
                 <Search placeholder="Search.." allowClear onSearch={onSearch} style={{ width: 320 }}/>
               </Col>
               <Col>
-                <Button type="primary" icon={<PlusOutlined/>}>Add client</Button>
+                <Button type="primary" icon={<PlusOutlined/>}>New group</Button>
               </Col>
             </Row>
           </Col>
