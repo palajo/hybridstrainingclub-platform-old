@@ -48,11 +48,9 @@ const Exercises: React.FC = () => {
       render: () => (
         <>
           <Link href="/exercises/exercise">
-            <Button size="small" type="dashed" style={{ marginRight: '16px' }}>
-              <EditOutlined/>
-            </Button>
+            <Button size="small" type="dashed" icon={<EditOutlined/>} style={{ marginRight: '16px' }}/>
           </Link>
-          <Button size="small" type="dashed" danger><CloseOutlined/></Button>
+          <Button size="small" type="dashed" icon={<CloseOutlined/>} danger/>
         </>
       ),
     },

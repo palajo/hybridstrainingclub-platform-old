@@ -47,11 +47,9 @@ const Groups: React.FC = () => {
       render: () => (
         <>
           <Link href="/groups/group">
-            <Button size="small" type="dashed" style={{ marginRight: '16px' }}>
-              <EditOutlined/>
-            </Button>
+            <Button size="small" type="dashed" icon={<EditOutlined/>} style={{ marginRight: '16px' }}/>
           </Link>
-          <Button size="small" type="dashed" danger><CloseOutlined/></Button>
+          <Button size="small" type="dashed" icon={<CloseOutlined/>} danger/>
         </>
       ),
     },

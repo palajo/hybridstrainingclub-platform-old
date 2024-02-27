@@ -1,7 +1,12 @@
 import React from 'react';
-import { Button, Col, Row, Space, theme, Typography } from 'antd';
+import { Button, Col, div, Row, theme, Typography } from 'antd';
 import { MinusOutlined } from '@ant-design/icons';
 import Head from 'next/head';
+import General from '@/components/Client/General';
+import History from '@/components/Client/History';
+import Progress from '@/components/Client/Progress';
+import Measurements from '@/components/Client/Measurements';
+import Billing from '@/components/Client/Billing';
 
 const { Title } = Typography;
 
@@ -35,66 +40,105 @@ const Client: React.FC = () => {
         <Col span={24}>
           <Row gutter={[24, 24]}>
             <Col lg={12}>
-              <Space style={{
-                width: '100%',
-                background: colorBgContainer,
-                padding: '24px 36px',
-                borderRadius: borderRadiusLG,
-              }}>
-                <Typography.Title level={4}>
-                  General
-                </Typography.Title>
-              </Space>
+              <Row gutter={[16, 24]}>
+                <Col lg={24}>
+                  <div style={{
+                    width: '100%',
+                    background: colorBgContainer,
+                    padding: '24px 36px 36px',
+                    borderRadius: borderRadiusLG,
+                  }}>
+                    <Row gutter={[16, 16]}>
+                      <Col xs={24}>
+                        <Typography.Title level={3}>
+                          General
+                        </Typography.Title>
+                      </Col>
+                      <Col xs={24}>
+                        <General/>
+                      </Col>
+                    </Row>
+                  </div>
+                </Col>
+                <Col lg={24}>
+                  <div style={{
+                    width: '100%',
+                    background: colorBgContainer,
+                    padding: '24px 36px 36px',
+                    borderRadius: borderRadiusLG,
+                  }}>
+                    <Row gutter={[16, 16]}>
+                      <Col xs={24}>
+                        <Typography.Title level={3}>
+                          Progress Images
+                        </Typography.Title>
+                      </Col>
+                      <Col xs={24}>
+                        <Progress/>
+                      </Col>
+                    </Row>
+                  </div>
+                </Col>
+              </Row>
             </Col>
             <Col lg={12}>
               <Row gutter={[16, 24]}>
                 <Col lg={24}>
-                  <Space style={{
+                  <div style={{
                     width: '100%',
                     background: colorBgContainer,
-                    padding: '24px 36px',
+                    padding: '24px 36px 36px',
                     borderRadius: borderRadiusLG,
                   }}>
-                    <Typography.Title level={4}>
-                      History
-                    </Typography.Title>
-                  </Space>
+                    <Row gutter={[16, 16]}>
+                      <Col xs={24}>
+                        <Typography.Title level={3}>
+                          Workout History
+                        </Typography.Title>
+                      </Col>
+                      <Col xs={24}>
+                        <History/>
+                      </Col>
+                    </Row>
+                  </div>
                 </Col>
                 <Col lg={24}>
-                  <Space style={{
+                  <div style={{
                     width: '100%',
                     background: colorBgContainer,
-                    padding: '24px 36px',
+                    padding: '24px 36px 36px',
                     borderRadius: borderRadiusLG,
                   }}>
-                    <Typography.Title level={4}>
-                      Images
-                    </Typography.Title>
-                  </Space>
+                    <Row gutter={[16, 16]}>
+                      <Col xs={24}>
+                        <Typography.Title level={3}>
+                          Measurements
+                        </Typography.Title>
+                      </Col>
+                      <Col xs={24}>
+                        <Measurements/>
+                      </Col>
+                    </Row>
+                  </div>
                 </Col>
                 <Col lg={24}>
-                  <Space style={{
+                  <div style={{
                     width: '100%',
                     background: colorBgContainer,
-                    padding: '24px 36px',
+                    padding: '24px 36px 36px',
                     borderRadius: borderRadiusLG,
                   }}>
-                    <Typography.Title level={4}>
-                      Measurements
-                    </Typography.Title>
-                  </Space>
-                </Col>
-                <Col lg={24}>
-                  <Space style={{
-                    width: '100%',
-                    background: colorBgContainer,
-                    padding: '24px 36px',
-                    borderRadius: borderRadiusLG,
-                  }}>
-                    <Typography.Title level={4}>
-                      Billing
-                    </Typography.Title>
-                  </Space>
+                    <Row gutter={[16, 16]}>
+                      <Col xs={24}>
+                        <Typography.Title level={3}>
+                          Billing
+                        </Typography.Title>
+                      </Col>
+                      <Col xs={24}>
+                        <Billing/>
+                      </Col>
+                    </Row>
+                  </div>
                 </Col>
               </Row>
             </Col>
