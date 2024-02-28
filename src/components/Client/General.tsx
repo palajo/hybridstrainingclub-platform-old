@@ -26,7 +26,7 @@ const General: React.FC = () => {
       <Col lg={24}>
         <Row gutter={[24, 16]} align="middle">
           <Col>
-            <Avatar size={84} icon={<UserOutlined />} />
+            <Avatar size={84} icon={<UserOutlined/>}/>
           </Col>
           <Col>
             <Typography.Title level={4} style={{ marginBottom: '4px' }}>
@@ -45,7 +45,7 @@ const General: React.FC = () => {
           onFinishFailed={onFinishFailed}
           autoComplete="off"
           layout="vertical"
-          style={{width: '100%'}}
+          style={{ width: '100%' }}
         >
           <Row gutter={[24, 0]}>
             <Col lg={12}>
@@ -54,7 +54,7 @@ const General: React.FC = () => {
                 name="name"
                 rules={[{ required: true, message: 'Name is required.' }]}
               >
-                <Input />
+                <Input/>
               </Form.Item>
             </Col>
             <Col lg={12}>
@@ -62,7 +62,7 @@ const General: React.FC = () => {
                 label="Gender"
                 name="gender"
               >
-                <Input />
+                <Input/>
               </Form.Item>
             </Col>
             <Col lg={12}>
@@ -71,7 +71,7 @@ const General: React.FC = () => {
                 name="email"
                 rules={[{ required: true, message: 'Email is required.' }]}
               >
-                <Input />
+                <Input/>
               </Form.Item>
             </Col>
             <Col lg={12}>
@@ -79,7 +79,7 @@ const General: React.FC = () => {
                 label="Phone"
                 name="phone"
               >
-                <Input />
+                <Input/>
               </Form.Item>
             </Col>
             <Col lg={12}>
@@ -111,7 +111,7 @@ const General: React.FC = () => {
                 label="Notes"
                 name="notes"
               >
-                <Input.TextArea />
+                <Input.TextArea/>
               </Form.Item>
             </Col>
             <Col lg={24}>
@@ -122,6 +122,6 @@ const General: React.FC = () => {
       </Col>
     </Row>
   );
-}
+};
 
 export default General;

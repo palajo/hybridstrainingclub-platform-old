@@ -2,23 +2,9 @@ import React, { useState } from 'react';
 import { Button, Col, Form, Input, Row, theme } from 'antd';
 import { CloseOutlined, CopyOutlined, MenuOutlined } from '@ant-design/icons';
 import { CSS } from '@dnd-kit/utilities';
-import {
-  rectSortingStrategy,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  useSortable,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
+import { SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import WorkoutBlock, { WorkoutBlockPlaceholder } from '@/components/Calendar/WorkoutBlock';
-import {
-  closestCenter,
-  DndContext,
-  DragOverlay,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from '@dnd-kit/core';
+import { closestCenter, DndContext, DragOverlay, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 
 interface WorkoutGroupProps {
@@ -131,7 +117,7 @@ const WorkoutGroup: React.FC<WorkoutGroupProps> = ({ group, add, remove, workout
               </Col>
               <Row>
                 <Col>
-                  <Button size="small" type="text" onClick={() => add(fields)}>
+                  <Button size="small" type="text" onClick={() => add({ ...fields })}>
                     <CopyOutlined/>
                   </Button>
                 </Col>
@@ -161,7 +147,7 @@ const WorkoutGroup: React.FC<WorkoutGroupProps> = ({ group, add, remove, workout
                       const { id } = active;
                       const { id: overId } = over || { id: null };
 
-                      move(id, overId)
+                      move(id, overId);
                     }}
                     modifiers={[restrictToVerticalAxis]}
                   >

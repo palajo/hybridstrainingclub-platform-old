@@ -1,21 +1,22 @@
-import fs from "fs";
-import path from "path";
-import { extractStyle } from "@ant-design/cssinjs";
-import { createHash } from "crypto";
+import fs from 'fs';
+import path from 'path';
+import { extractStyle } from '@ant-design/cssinjs';
+import { createHash } from 'crypto';
 // @ts-ignore
-import type Entity from "@ant-design/cssinjs/lib/Cache";
+import type Entity from '@ant-design/cssinjs/lib/Cache';
 
 export type DoExtraStyleOptions = {
   cache: Entity;
   dir?: string;
   baseFileName?: string;
 };
+
 export function doExtraStyle({
-  cache,
-  dir = "antd-output",
-  baseFileName = "antd.min",
-}: DoExtraStyleOptions) {
-  const baseDir = path.resolve(__dirname, "../../static/css");
+                               cache,
+                               dir = 'antd-output',
+                               baseFileName = 'antd.min',
+                             }: DoExtraStyleOptions) {
+  const baseDir = path.resolve(__dirname, '../../static/css');
 
   const outputCssPath = path.join(baseDir, dir);
 
@@ -24,10 +25,10 @@ export function doExtraStyle({
   }
 
   const css = extractStyle(cache, true);
-  if (!css) return "";
+  if (!css) return '';
 
-  const md5 = createHash("md5");
-  const hash = md5.update(css).digest("hex");
+  const md5 = createHash('md5');
+  const hash = md5.update(css).digest('hex');
   const fileName = `${baseFileName}.${hash.substring(0, 8)}.css`;
   const fullpath = path.join(outputCssPath, fileName);
 

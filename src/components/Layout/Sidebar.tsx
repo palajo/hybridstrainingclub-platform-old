@@ -1,13 +1,6 @@
 import React, { useState } from 'react';
 import { Layout, Menu, type MenuProps } from 'antd';
-import {
-  AimOutlined,
-  CalendarOutlined,
-  ContainerOutlined,
-  OrderedListOutlined,
-  SettingOutlined,
-  UserOutlined,
-} from '@ant-design/icons';
+import { AimOutlined, CalendarOutlined, ContainerOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 import Image from 'next/image';
 import Logo from '@/images/logo.png';
 import Link from 'next/link';

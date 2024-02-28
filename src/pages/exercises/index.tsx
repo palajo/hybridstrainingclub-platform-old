@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Button, Col, Row, Form, Input, InputNumber, Table, theme, Typography, Popconfirm } from 'antd';
-import { CloseOutlined, DeleteOutlined, EditOutlined, PlusOutlined, SaveOutlined } from '@ant-design/icons';
+import { Button, Col, Form, Input, InputNumber, Popconfirm, Row, Table, theme, Typography } from 'antd';
+import { CloseOutlined, DeleteOutlined, EditOutlined, SaveOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import Head from 'next/head';
 import { SearchProps } from 'antd/es/input/Search';
@@ -9,7 +9,7 @@ const { Search } = Input;
 const { Title } = Typography;
 
 interface Item {
-  key: string;
+  key: number;
   name: string;
   age: number;
   address: string;
@@ -17,6 +17,7 @@ interface Item {
 
 interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
   editing: boolean;
+  required: boolean;
   dataIndex: string;
   title: any;
   inputType: 'number' | 'text';
@@ -26,15 +27,16 @@ interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
 }
 
 const EditableCell: React.FC<EditableCellProps> = ({
-                                                     editing,
-                                                     dataIndex,
-                                                     title,
-                                                     inputType,
-                                                     record,
-                                                     index,
-                                                     children,
-                                                     ...restProps
-                                                   }) => {
+  editing,
+  dataIndex,
+  title,
+  inputType,
+  record,
+  index,
+  required,
+  children,
+  ...restProps
+}) => {
   const inputNode = inputType === 'number' ? <InputNumber/> : <Input/>;
 
   return (
@@ -45,7 +47,7 @@ const EditableCell: React.FC<EditableCellProps> = ({
           style={{ margin: 0 }}
           rules={[
             {
-              required: true,
+              required: required,
               message: `Please Input ${title}!`,
             },
           ]}
@@ -68,25 +70,25 @@ const Exercises: React.FC = () => {
 
   const [data, setData] = useState([
     {
-      key: '1',
+      key: 1,
       title: 'Yoga push ups',
       category: 'Vertical Push',
       video: 'https://vimeo.com/743946663',
     },
     {
-      key: '2',
+      key: 2,
       title: 'Band hamstring curls',
       category: 'Deadlifts & Hip Hinges',
       video: 'https://vimeo.com/753918684',
     },
     {
-      key: '3',
+      key: 3,
       title: 'Air squats',
       category: 'Squats & Variations',
       video: 'https://vimeo.com/753766661',
     },
     {
-      key: '4',
+      key: 4,
       title: 'Rings reverse deadlifts',
       category: 'Core work',
       video: 'https://vimeo.com/735168704',
@@ -98,7 +100,7 @@ const Exercises: React.FC = () => {
   const isEditing = (record: Item) => record.key === editingKey;
 
   const edit = (record: Partial<Item> & { key: React.Key }) => {
-    form.setFieldsValue({ name: '', age: '', address: '', ...record });
+    form.setFieldsValue({ title: '', category: '', video: '', ...record });
     setEditingKey(record.key);
   };
 
@@ -147,11 +149,11 @@ const Exercises: React.FC = () => {
       title: '',
       category: '',
       video: '',
-    }
+    };
 
     setData(data => [...data, exerciseObject]);
-    setEditingKey(exerciseObject.key);
-  }
+    edit({ key: exerciseObject.key });
+  };
 
 
   const columns = [
@@ -161,12 +163,14 @@ const Exercises: React.FC = () => {
       sorter: (a, b) => a.title.localeCompare(b.title),
       render: (text: string) => <Link href="#" style={{ color: colorPrimary }}>{text}</Link>,
       editable: true,
+      required: true,
     },
     {
       title: 'Category',
       dataIndex: 'category',
       sorter: (a, b) => a.category.localeCompare(b.category),
       editable: true,
+      required: true,
     },
     {
       title: 'Video',
@@ -234,6 +238,7 @@ const Exercises: React.FC = () => {
         inputType: col.dataIndex === 'age' ? 'number' : 'text',
         dataIndex: col.dataIndex,
         title: col.title,
+        required: col.required,
         editing: isEditing(record),
       }),
     };

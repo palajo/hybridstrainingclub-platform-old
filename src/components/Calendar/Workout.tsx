@@ -1,15 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Col, Form, Input, Row, theme, Typography } from 'antd';
 import { Dayjs } from 'dayjs';
-import {
-  closestCenter,
-  DndContext,
-  DragOverlay,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from '@dnd-kit/core';
+import { closestCenter, DndContext, DragOverlay, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 
@@ -32,7 +24,6 @@ const Workout: React.FC<WorkoutProps> = ({ workout, date, workoutIndex }) => {
   const stylesWorkout: React.CSSProperties = {
     width: 'calc(100% / 7)',
     border: `1px solid ${colorBorder}`,
-    borderRight: `${workoutIndex !== 6 && '0'}`,
   };
 
   const stylesWorkoutColumn: React.CSSProperties = {

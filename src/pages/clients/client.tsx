@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Col, div, Row, theme, Typography } from 'antd';
+import { Button, Col, Row, theme, Typography } from 'antd';
 import { MinusOutlined } from '@ant-design/icons';
 import Head from 'next/head';
 import General from '@/components/Client/General';

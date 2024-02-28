@@ -2,16 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Col, Row } from 'antd';
 import dayjs from 'dayjs';
 import { Line } from 'react-chartjs-2';
-import {
-  CategoryScale,
-  Chart as ChartJS,
-  Legend,
-  LinearScale,
-  LineElement,
-  PointElement,
-  Title,
-  Tooltip,
-} from 'chart.js';
+import { CategoryScale, Chart as ChartJS, Legend, LinearScale, LineElement, PointElement, Title, Tooltip } from 'chart.js';
 
 ChartJS.register(
   CategoryScale,
@@ -92,7 +83,7 @@ const Measurements: React.FC = () => {
         label: key,
         data: measurements.map(entry => entry.values[key].value),
         fill: false,
-        borderColor: '#' + Math.floor(Math.random()*16777215).toString(16), // Random color
+        borderColor: '#' + Math.floor(Math.random() * 16777215).toString(16), // Random color
       };
     });
 
@@ -102,7 +93,7 @@ const Measurements: React.FC = () => {
   return (
     <Row>
       <Col lg={24}>
-        <Line data={chartData} />
+        <Line data={chartData}/>
       </Col>
     </Row>
   );

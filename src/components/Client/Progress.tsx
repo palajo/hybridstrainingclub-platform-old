@@ -40,6 +40,6 @@ const Progress: React.FC = () => {
       </Col>
     </Row>
   );
-}
+};
 
 export default Progress;

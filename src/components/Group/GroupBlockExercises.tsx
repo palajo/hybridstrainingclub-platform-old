@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Form, GetRef, Input, InputNumber, Popconfirm, Table, theme } from 'antd';
+import { AutoComplete, Button, Form, FormListFieldData, Input, InputNumber, Popconfirm, Table, theme } from 'antd';
 import { CloseOutlined, DeleteOutlined, EditOutlined, MenuOutlined, SaveOutlined } from '@ant-design/icons';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
@@ -14,6 +14,13 @@ interface EditableRowProps extends React.HTMLAttributes<HTMLTableRowElement> {
   'data-row-key': string;
 }
 
+interface GroupBlockExercisesProps {
+  exercises: FormListFieldData[];
+  add: (defaultValue?: any, insertIndex?: number | undefined) => void;
+  remove: (index: number | number[]) => void;
+  move: (from: number, to: number) => void;
+}
+
 interface Exercise {
   key: number;
   title: string;
@@ -21,29 +28,61 @@ interface Exercise {
   video: string;
   sets: number;
   reps: number;
+  required: boolean;
 }
 
 interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
   editing: boolean;
+  required: boolean;
   dataIndex: string;
   title: any;
-  inputType: 'number' | 'text';
+  inputType: 'number' | 'text' | 'autocomplete';
   record: Exercise;
   index: number;
   children: React.ReactNode;
 }
 
 const EditableCell: React.FC<EditableCellProps> = ({
-                                                     editing,
-                                                     dataIndex,
-                                                     title,
-                                                     inputType,
-                                                     record,
-                                                     index,
-                                                     children,
-                                                     ...restProps
-                                                   }) => {
-  const inputNode = inputType === 'number' ? <InputNumber/> : <Input/>;
+  editing,
+  dataIndex,
+  required,
+  title,
+  inputType,
+  record,
+  index,
+  children,
+  ...restProps
+}) => {
+
+  const [categoryOptions, setCategoryOptions] = useState<{ value: string }[]>([
+    {
+      value: 'Category #1',
+    },
+    {
+      value: 'Category #2',
+    },
+    {
+      value: 'Category #3',
+    },
+  ]);
+
+  const getInputNode = () => {
+    if (inputType === 'autocomplete') {
+      return (
+        <AutoComplete options={categoryOptions}/>
+      )
+    }
+
+    if (inputType === 'number') {
+      return (
+        <InputNumber/>
+      )
+    }
+
+    return (
+      <Input/>
+    )
+  }
 
   return (
     <td {...restProps}>
@@ -53,12 +92,12 @@ const EditableCell: React.FC<EditableCellProps> = ({
           style={{ margin: 0 }}
           rules={[
             {
-              required: true,
+              required: required,
               message: `Please Input ${title}!`,
             },
           ]}
         >
-          {inputNode}
+          {getInputNode()}
         </Form.Item>
       ) : (
         children
@@ -107,46 +146,21 @@ const EditableRow = ({ children, ...props }: EditableRowProps) => {
   );
 };
 
-const GroupBlockExercises: React.FC = () => {
+const GroupBlockExercises: React.FC<GroupBlockExercisesProps> = ({ exercises, add, remove, move }) => {
   const {
     token: { colorBgContainer, borderRadiusLG, colorPrimary },
   } = theme.useToken();
 
   const [form] = Form.useForm();
 
-  const [data, setData] = useState([
-    {
-      key: '1',
-      title: 'Yoga push ups',
-      category: 'Vertical Push',
-      video: 'https://vimeo.com/743946663',
-    },
-    {
-      key: '2',
-      title: 'Band hamstring curls',
-      category: 'Deadlifts & Hip Hinges',
-      video: 'https://vimeo.com/753918684',
-    },
-    {
-      key: '3',
-      title: 'Air squats',
-      category: 'Squats & Variations',
-      video: 'https://vimeo.com/753766661',
-    },
-    {
-      key: '4',
-      title: 'Rings reverse deadlifts',
-      category: 'Core work',
-      video: 'https://vimeo.com/735168704',
-    },
-  ]);
+  const [data, setData] = useState([]);
 
   const [editingKey, setEditingKey] = useState('');
 
   const isEditing = (record: Exercise) => record.key === editingKey;
 
   const edit = (record: Partial<Exercise> & { key: React.Key }) => {
-    form.setFieldsValue({ name: '', age: '', address: '', ...record });
+    form.setFieldsValue({ title: '', category: '', video: '', sets: '', reps: '', ...record });
     setEditingKey(record.key);
   };
 
@@ -184,7 +198,6 @@ const GroupBlockExercises: React.FC = () => {
     setData(newData);
   };
 
-
   const handleAddExercise = () => {
     const highestKey = data.reduce((maxKey, data) => {
       return data.key > maxKey ? data.key : maxKey;
@@ -195,13 +208,15 @@ const GroupBlockExercises: React.FC = () => {
       title: '',
       category: '',
       video: '',
+      sets: '',
+      reps: '',
     };
 
     setData(data => [...data, exerciseObject]);
-    setEditingKey(exerciseObject.key);
+    edit({ key: exerciseObject.key });
   };
 
-  const columns: (ColumnTypes[number] & { editable?: boolean; dataIndex: string })[] = [
+  const columns: (ColumnTypes[number] & { editable?: boolean; required?: boolean; dataIndex: string })[] = [
     {
       key: 'sort',
       dataIndex: 'sort',
@@ -210,15 +225,15 @@ const GroupBlockExercises: React.FC = () => {
     {
       title: 'Exercise',
       dataIndex: 'title',
-      sorter: (a, b) => a.title.localeCompare(b.title),
       render: (text: string) => <Link href="#" style={{ color: colorPrimary }}>{text}</Link>,
       editable: true,
+      required: true,
     },
     {
       title: 'Category',
       dataIndex: 'category',
-      sorter: (a, b) => a.category.localeCompare(b.category),
       editable: true,
+      required: true,
     },
     {
       title: 'Video',
@@ -229,11 +244,13 @@ const GroupBlockExercises: React.FC = () => {
       title: 'Sets',
       dataIndex: 'sets',
       editable: true,
+      width: 90,
     },
     {
       title: 'Reps',
       dataIndex: 'reps',
       editable: true,
+      width: 90,
     },
     {
       title: 'Actions',
@@ -282,6 +299,7 @@ const GroupBlockExercises: React.FC = () => {
           </>
         );
       },
+      width: 160,
     },
   ];
 
@@ -293,9 +311,10 @@ const GroupBlockExercises: React.FC = () => {
       ...col,
       onCell: (record: Exercise) => ({
         record,
-        inputType: col.dataIndex === 'age' ? 'number' : 'text',
+        inputType: col.dataIndex === 'category' ? 'autocomplete' : 'text',
         dataIndex: col.dataIndex,
         title: col.title,
+        required: col.required,
         editing: isEditing(record),
       }),
     };

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Button, Col, Form, Input, Modal, Row } from 'antd';
 
-import WorkoutBlockModalTable from './WorkoutBlockModalTable';
 import { EditOutlined } from '@ant-design/icons';
+import GroupBlockExercises from '@/components/Group/GroupBlockExercises';
 
 interface WorkoutBlockModalProps {
   block: any;
@@ -12,7 +12,13 @@ interface WorkoutBlockModalProps {
   handleUpdate: () => void;
 }
 
-const WorkoutBlockModal: React.FC<WorkoutBlockModalProps> = ({ block, handleUpdate, workoutIndex, groupIndex, blockIndex }) => {
+const WorkoutBlockModal: React.FC<WorkoutBlockModalProps> = ({
+  block,
+  handleUpdate,
+  workoutIndex,
+  groupIndex,
+  blockIndex,
+}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const form = Form.useFormInstance();
@@ -35,7 +41,7 @@ const WorkoutBlockModal: React.FC<WorkoutBlockModalProps> = ({ block, handleUpda
       <Button size="small" type="text" onClick={showModal}>
         <EditOutlined/>
       </Button>
-      <Modal open={isModalOpen} onOk={handleOk} onCancel={handleCancel} width="960px">
+      <Modal open={isModalOpen} onOk={handleOk} onCancel={handleCancel} width="1140px">
         <Row gutter={[16, 16]}>
           <Col span={12}>
             <Form.Item
@@ -57,8 +63,8 @@ const WorkoutBlockModal: React.FC<WorkoutBlockModalProps> = ({ block, handleUpda
           </Col>
           <Col span={24}>
             <Form.List name={[block.name, 'exercises']}>
-              {(exercises, { add, remove }) => (
-                <WorkoutBlockModalTable exercises={exercises} add={add} remove={remove}/>
+              {(exercises, { add, remove, move }) => (
+                <GroupBlockExercises exercises={exercises} add={add} move={move} remove={remove}/>
               )}
             </Form.List>
           </Col>

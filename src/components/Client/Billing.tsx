@@ -1,7 +1,5 @@
-import React, { useState } from 'react';
-import { Button, Col, Row, Table, TableColumnsType, Tag, theme } from 'antd';
-import Link from 'next/link';
-import { CloseOutlined, EditOutlined } from '@ant-design/icons';
+import React from 'react';
+import { Col, Row, Table, TableColumnsType, Tag } from 'antd';
 
 interface DataType {
   key: React.Key;
@@ -22,7 +20,7 @@ const Billing: React.FC = () => {
     {
       title: 'Status',
       dataIndex: 'status',
-      render: (value) => <Tag color={`${value === 'Paid' ? 'green' : 'red'}`}>{value}</Tag>
+      render: (value) => <Tag color={`${value === 'Paid' ? 'green' : 'red'}`}>{value}</Tag>,
     },
     {
       title: 'Date',
@@ -72,6 +70,6 @@ const Billing: React.FC = () => {
       </Col>
     </Row>
   );
-}
+};
 
 export default Billing;

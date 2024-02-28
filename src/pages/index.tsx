@@ -4,18 +4,18 @@ import dayjs from 'dayjs';
 
 import Calendar from '@/components/Calendar/Calendar';
 import Head from 'next/head';
-import { ArrowLeftOutlined, ArrowRightOutlined, DeleteOutlined, PlusOutlined, SaveOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined, ArrowRightOutlined, DeleteOutlined, SaveOutlined } from '@ant-design/icons';
 
 const Homepage: React.FC = () => {
   const [date, setDate] = useState(dayjs());
 
-  const goToPreviousWeek = () => setDate(date.subtract(1, 'week'));
+  const goToPreviousMonth = () => setDate(date.subtract(4, 'week'));
 
-  const goToNextWeek = () => setDate(date.add(1, 'week'));
+  const goToNextMonth = () => setDate(date.add(4, 'week'));
 
   const [program, setProgram] = useState({
     value: 'program-1',
-    title: 'Program #1'
+    title: 'Program #1',
   });
 
   return (
@@ -32,17 +32,17 @@ const Homepage: React.FC = () => {
                   <Row gutter={[8, 8]}>
                     <Col>
                       <Col>
-                        <Button onClick={goToPreviousWeek}><ArrowLeftOutlined/></Button>
+                        <Button onClick={goToPreviousMonth}><ArrowLeftOutlined/></Button>
                       </Col>
                     </Col>
                     <Col>
-                      <Button onClick={goToNextWeek}><ArrowRightOutlined/></Button>
+                      <Button onClick={goToNextMonth}><ArrowRightOutlined/></Button>
                     </Col>
                   </Row>
                 </Col>
                 <Col>
-                  <Typography.Title level={3} style={{ marginBottom: 0}}>
-                    {date.startOf('week').format('MMM DD')} - {date.endOf('week').format('MMM DD')}
+                  <Typography.Title level={3} style={{ marginBottom: 0 }}>
+                    {date.startOf('week').format('MMM DD')} - {date.add(3, 'week').endOf('week').format('MMM DD')}
                   </Typography.Title>
                 </Col>
               </Row>
@@ -65,7 +65,7 @@ const Homepage: React.FC = () => {
                   />
                 </Col>
                 <Col>
-                  <Button type="dashed" danger icon={<DeleteOutlined/>}  onClick={() => alert('Delete program')}/>
+                  <Button type="dashed" danger icon={<DeleteOutlined/>} onClick={() => alert('Delete program')}/>
                 </Col>
                 <Col>
                   <Button type="primary" icon={<SaveOutlined/>}>Save</Button>

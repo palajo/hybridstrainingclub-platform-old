@@ -1,7 +1,6 @@
-import React, { useEffect, useState, useMemo } from 'react';
-import { Col, Form, Row, theme } from 'antd';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Col, Form, Row, theme, Typography } from 'antd';
 import { Dayjs } from 'dayjs';
-
 import Workout from '@/components/Calendar/Workout';
 
 interface CalendarProps {
@@ -37,7 +36,7 @@ const Calendar: React.FC<CalendarProps> = ({ date }) => {
     const weekData = [];
     const startDate = date.startOf('week');
 
-    for (let i = 0; i < 7; i++) {
+    for (let i = 0; i < 28; i++) {
       const currentDate = startDate.add(i, 'day').format('DD-MM-YYYY');
       const workout = formData.workouts.find(item => item.date === currentDate);
 
@@ -55,13 +54,14 @@ const Calendar: React.FC<CalendarProps> = ({ date }) => {
     form.setFieldsValue({ workouts: data });
   }, [data, form]);
 
-  console.log(formData);
-
   return (
     <Form
       form={form}
       name="programForm"
       autoComplete="off"
+      onValuesChange={(changedValues, allValues) => {
+        form.setFieldsValue(allValues);
+      }}
     >
       <Row gutter={[16, 24]}>
         <Col span={24}
@@ -69,14 +69,30 @@ const Calendar: React.FC<CalendarProps> = ({ date }) => {
           <Form.List name="workouts">
             {(workouts) => (
               <Row justify="space-between">
-                {workouts.map((workout, index) => (
-                  <Workout
-                    key={index}
-                    date={date.startOf('week').add(index, 'day')}
-                    workout={workout}
-                    workoutIndex={index}
-                  />
-                ))}
+                {workouts.map((workout, index) => {
+                  return index % 7 ? (
+                    <Workout
+                      key={index}
+                      date={date.startOf('week').add(index, 'day')}
+                      workout={workout}
+                      workoutIndex={index}
+                    />
+                  ) : (
+                    <>
+                      <Col lg={24} style={{ marginTop: `${index !== 0 ? '56px' : 0}`, marginBottom: '8px' }}>
+                        <Typography.Title level={4}>
+                          Week #{(index / 7) + 1}
+                        </Typography.Title>
+                      </Col>
+                      <Workout
+                        key={index}
+                        date={date.startOf('week').add(index, 'day')}
+                        workout={workout}
+                        workoutIndex={index}
+                      />
+                    </>
+                  )
+                })}
               </Row>
             )}
           </Form.List>

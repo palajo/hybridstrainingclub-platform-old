@@ -12,6 +12,7 @@ interface DataType {
   key: React.Key;
   name: string;
   plan: string;
+  program: string;
   email: string;
   phone: string;
 }
@@ -35,6 +36,13 @@ const Clients: React.FC = () => {
     {
       title: 'Plan',
       dataIndex: 'plan',
+      sorter: (a, b) => a.plan.localeCompare(b.plan),
+
+    },
+    {
+      title: 'Program',
+      dataIndex: 'program',
+      sorter: (a, b) => a.program.localeCompare(b.program),
     },
     {
       title: 'Email',
@@ -65,6 +73,7 @@ const Clients: React.FC = () => {
       key: '1',
       name: 'John Brown',
       plan: 'Standard plan',
+      program: 'Program #1',
       email: 'john.brown@gmail.com',
       phone: '+1 (000) 00 00 000',
     },
@@ -72,6 +81,7 @@ const Clients: React.FC = () => {
       key: '2',
       name: 'Jim Green',
       plan: 'Standard plan',
+      program: 'Program #1',
       email: 'jim.green@gmail.com',
       phone: '+1 (000) 00 00 000',
     },
@@ -79,6 +89,7 @@ const Clients: React.FC = () => {
       key: '3',
       name: 'Joe Black',
       plan: 'Standard plan',
+      program: 'Program #1',
       email: 'joe.black@gmail.com',
       phone: '+1 (000) 00 00 000',
     },
@@ -86,6 +97,7 @@ const Clients: React.FC = () => {
       key: '4',
       name: 'Alex Robert',
       plan: 'Standard plan',
+      program: 'Program #1',
       email: 'alex.robert@gmail.com',
       phone: '+1 (000) 00 00 000',
     },
