@@ -234,6 +234,7 @@ const Calendar: React.FC = () => {
             moveGroupBlock,
             moveGroupBlockExercise,
             EditBlock,
+            updateBlock,
           }}
         >
           <Row gutter={[0, 0]}>
@@ -515,6 +516,19 @@ const Calendar: React.FC = () => {
 
       if (workoutToUpdate && workoutToUpdate.groups && workoutToUpdate.groups[groupIndex]) {
         workoutToUpdate.groups[groupIndex][field] = newValue;
+      }
+
+      return updatedProgram;
+    });
+  };
+
+  function updateBlock(newValue: any, workoutDate: string, groupIndex: number, blockIndex: number) {
+    setProgram((prevProgram) => {
+      const updatedProgram = { ...prevProgram };
+      const workoutToUpdate = updatedProgram.workouts.find(workout => workout.date === workoutDate);
+
+      if (workoutToUpdate && workoutToUpdate.groups && workoutToUpdate.groups[groupIndex] && workoutToUpdate.groups[groupIndex].blocks && workoutToUpdate.groups[groupIndex].blocks[blockIndex]) {
+        workoutToUpdate.groups[groupIndex].blocks[blockIndex] = newValue;
       }
 
       return updatedProgram;

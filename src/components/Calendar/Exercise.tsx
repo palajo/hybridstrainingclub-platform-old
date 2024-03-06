@@ -1,16 +1,13 @@
 import React, { useContext } from 'react';
 import { Button, Col, Input, InputNumber, Row, theme } from 'antd';
 import { DeleteOutlined, MenuOutlined } from '@ant-design/icons';
-import { CalendarContext } from '@/components/Calendar/Calendar';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { CalendarBlockModalContext } from '@/components/Calendar/BlockModal';
 
-const Exercise: React.FC<{ exercise: any; groupIndex: number; blockIndex: number; exerciseIndex: number; workoutDate: string; }> = ({
+const Exercise: React.FC<{ exercise: any; exerciseIndex: number; }> = ({
   exercise,
-  groupIndex,
-  blockIndex,
   exerciseIndex,
-  workoutDate,
 }) => {
   const {
     token: {
@@ -20,7 +17,7 @@ const Exercise: React.FC<{ exercise: any; groupIndex: number; blockIndex: number
     },
   } = theme.useToken();
 
-  const { updateExerciseField, removeWorkoutGroupBlockExercise } = useContext(CalendarContext);
+  const { updateModalBlockExerciseField, removeModalBlockExercise } = useContext(CalendarBlockModalContext);
 
   const {
     listeners,
@@ -64,7 +61,7 @@ const Exercise: React.FC<{ exercise: any; groupIndex: number; blockIndex: number
             placeholder="Exercise"
             value={exercise.title}
             onChange={(e) => {
-              updateExerciseField('title', e.target.value, workoutDate, groupIndex, blockIndex, exerciseIndex);
+              updateModalBlockExerciseField('title', e.target.value, exerciseIndex);
             }}
           />
         </Col>
@@ -74,7 +71,7 @@ const Exercise: React.FC<{ exercise: any; groupIndex: number; blockIndex: number
             placeholder="Category"
             value={exercise.category}
             onChange={(e) => {
-              updateExerciseField('category', e.target.value, workoutDate, groupIndex, blockIndex, exerciseIndex);
+              updateModalBlockExerciseField('category', e.target.value, exerciseIndex);
             }}
           />
         </Col>
@@ -84,7 +81,7 @@ const Exercise: React.FC<{ exercise: any; groupIndex: number; blockIndex: number
             placeholder="Video"
             value={exercise.video}
             onChange={(e) => {
-              updateExerciseField('video', e.target.value, workoutDate, groupIndex, blockIndex, exerciseIndex);
+              updateModalBlockExerciseField('video', e.target.value, exerciseIndex);
             }}
           />
         </Col>
@@ -93,8 +90,8 @@ const Exercise: React.FC<{ exercise: any; groupIndex: number; blockIndex: number
             size="middle"
             placeholder="Sets"
             value={exercise.sets}
-            onChange={(e) => {
-              updateExerciseField('sets', e.target.value, workoutDate, groupIndex, blockIndex, exerciseIndex);
+            onChange={(newValue) => {
+              updateModalBlockExerciseField('sets', newValue, exerciseIndex);
             }}
           />
         </Col>
@@ -103,8 +100,8 @@ const Exercise: React.FC<{ exercise: any; groupIndex: number; blockIndex: number
             size="middle"
             placeholder="Reps"
             value={exercise.reps}
-            onChange={(e) => {
-              updateExerciseField('reps', e.target.value, workoutDate, groupIndex, blockIndex, exerciseIndex);
+            onChange={(newValue) => {
+              updateModalBlockExerciseField('reps', newValue, exerciseIndex);
             }}
           />
         </Col>
@@ -113,8 +110,8 @@ const Exercise: React.FC<{ exercise: any; groupIndex: number; blockIndex: number
             size="middle"
             placeholder="Rest"
             value={exercise.rest}
-            onChange={(e) => {
-              updateExerciseField('rest', e.target.value, workoutDate, groupIndex, blockIndex, exerciseIndex);
+            onChange={(newValue) => {
+              updateModalBlockExerciseField('rest', newValue, exerciseIndex);
             }}
           />
         </Col>
@@ -122,7 +119,7 @@ const Exercise: React.FC<{ exercise: any; groupIndex: number; blockIndex: number
           <Button
             size="small"
             type="text"
-            onClick={() => removeWorkoutGroupBlockExercise(workoutDate, groupIndex, blockIndex, exerciseIndex)}
+            onClick={() => removeModalBlockExercise(exerciseIndex)}
             danger
           >
             <DeleteOutlined/>
