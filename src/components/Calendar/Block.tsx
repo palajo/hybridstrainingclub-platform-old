@@ -19,7 +19,7 @@ const Block: React.FC<{ block: any; groupIndex: number; blockIndex: number; work
     },
   } = theme.useToken();
 
-  const { updateBlockField, removeWorkoutGroupBlock, EditBlock } = useContext(CalendarContext);
+  const { removeWorkoutGroupBlock, EditBlock } = useContext(CalendarContext);
 
   const {
     listeners,

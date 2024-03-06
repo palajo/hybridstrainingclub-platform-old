@@ -5,7 +5,7 @@ import { CalendarContext } from '@/components/Calendar/Calendar';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
-const Exercise: React.FC<{ exercise: any; groupIndex: number; blockIndex: number; exerciseIndex: number; workoutDate: string }> = ({
+const Exercise: React.FC<{ exercise: any; groupIndex: number; blockIndex: number; exerciseIndex: number; workoutDate: string; }> = ({
   exercise,
   groupIndex,
   blockIndex,

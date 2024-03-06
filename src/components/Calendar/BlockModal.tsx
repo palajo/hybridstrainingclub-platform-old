@@ -6,7 +6,7 @@ import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrate
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import Exercise from '@/components/Calendar/Exercise';
 
-const BlockModal: React.FC<{ show: boolean, onHide: () => void; block: any; groupIndex: number | null; blockIndex: number | null; workoutDate: string | null }> = ({
+const BlockModal: React.FC<{ show: boolean, onHide: () => void; block: any; groupIndex: number; blockIndex: number; workoutDate: string }> = ({
   show,
   onHide,
   block,

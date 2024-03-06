@@ -5,7 +5,89 @@ import { ArrowLeftOutlined, ArrowRightOutlined, DeleteOutlined, SaveOutlined } f
 import Workout from '@/components/Calendar/Workout';
 import BlockModal from '@/components/Calendar/BlockModal';
 
-export const CalendarContext = React.createContext();
+interface Workout {
+  date: string;
+  video: string;
+  groups: Group[];
+}
+
+interface Exercise {
+  title: string;
+  category: string;
+  video: string;
+  sets: number;
+  reps: number;
+  rest: number;
+}
+
+interface Block {
+  title: string;
+  notes: string;
+  exercises: Exercise[];
+}
+
+interface Group {
+  title: string;
+  blocks: Block[];
+}
+
+interface Program {
+  slug: string;
+  title: string;
+  workouts: Workout[];
+}
+
+interface EditingBlock {
+  show: boolean;
+  block: Block;
+  workoutDate: string;
+  groupIndex: number | null;
+  blockIndex: number | null;
+}
+
+interface CalendarContextProps {
+  program: Program;
+  setProgram: React.Dispatch<React.SetStateAction<Program>>;
+  updateWorkoutField: (field: string, newValue: any, workoutDate: string) => void;
+  updateGroupField: (field: string, newValue: any, workoutDate: string, groupIndex: number) => void;
+  updateBlockField: (field: string, newValue: any, workoutDate: string, groupIndex: number, blockIndex: number) => void;
+  updateExerciseField: (field: string, newValue: any, workoutDate: string, groupIndex: number, blockIndex: number, exerciseIndex: number) => void;
+  addWorkoutGroup: (workoutDate: string) => void;
+  removeWorkoutGroup: (workoutDate: string, groupIndex: number) => void;
+  addWorkoutGroupBlock: (workoutDate: string, groupIndex: number) => void;
+  removeWorkoutGroupBlock: (workoutDate: string, groupIndex: number, blockIndex: number) => void;
+  addWorkoutGroupBlockExercise: (workoutDate: string, groupIndex: number, blockIndex: number) => void;
+  removeWorkoutGroupBlockExercise: (workoutDate: string, groupIndex: number, blockIndex: number, exerciseIndex: number) => void;
+  duplicateGroup: (workoutDate: string, groupIndex: number) => void;
+  moveGroup: (workoutDate: string, fromIndex: number, toIndex: number) => void;
+  moveGroupBlock: (workoutDate: string, groupIndex: number, fromIndex: number, toIndex: number) => void;
+  moveGroupBlockExercise: (workoutDate: string, groupIndex: number, blockIndex: number, fromIndex: number, toIndex: number) => void;
+  EditBlock: (block: Block, groupIndex: number, blockIndex: number, workoutDate: string) => void;
+}
+
+export const CalendarContext = React.createContext<CalendarContextProps>({
+  program: {
+    slug: '',
+    title: '',
+    workouts: [],
+  },
+  setProgram: () => {},
+  updateWorkoutField: () => {},
+  updateGroupField: () => {},
+  updateBlockField: () => {},
+  updateExerciseField: () => {},
+  addWorkoutGroup: () => {},
+  removeWorkoutGroup: () => {},
+  addWorkoutGroupBlock: () => {},
+  removeWorkoutGroupBlock: () => {},
+  addWorkoutGroupBlockExercise: () => {},
+  removeWorkoutGroupBlockExercise: () => {},
+  duplicateGroup: () => {},
+  moveGroup: () => {},
+  moveGroupBlock: () => {},
+  moveGroupBlockExercise: () => {},
+  EditBlock: () => {},
+});
 
 const Calendar: React.FC = () => {
   const {
