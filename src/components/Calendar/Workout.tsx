@@ -77,10 +77,8 @@ const Workout: React.FC<{ date: Dayjs, workout: any; }> = ({ date, workout }) =>
               </SortableContext>
               <DragOverlay>
                 {activeIndex && (
-                  <Typography>
-                    <Group group={workout.groups[activeIndex]} groupIndex={activeIndex}
-                           workoutDate={date.format('YYYY-MM-DD')}/>
-                  </Typography>
+                  <Group group={workout.groups[activeIndex]} groupIndex={activeIndex}
+                         workoutDate={date.format('YYYY-MM-DD')}/>
                 )}
               </DragOverlay>
             </DndContext>

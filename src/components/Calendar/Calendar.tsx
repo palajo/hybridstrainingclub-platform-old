@@ -76,8 +76,8 @@ const Calendar: React.FC = () => {
     show: false,
     block: {},
     workoutDate: '',
-    groupIndex: 0,
-    blockIndex: 0,
+    groupIndex: null,
+    blockIndex: null,
   });
 
   return (
@@ -145,10 +145,13 @@ const Calendar: React.FC = () => {
             removeWorkoutGroup,
             addWorkoutGroupBlock,
             removeWorkoutGroupBlock,
+            addWorkoutGroupBlockExercise,
+            removeWorkoutGroupBlockExercise,
             duplicateGroup,
             moveGroup,
             moveGroupBlock,
-            EditBlock
+            moveGroupBlockExercise,
+            EditBlock,
           }}
         >
           <Row gutter={[0, 0]}>
@@ -166,20 +169,22 @@ const Calendar: React.FC = () => {
                 />
               </Col>
             ))}
-            <BlockModal
-              show={editingBlock.show}
-              onHide={() => setEditingBlock({
-                show: false,
-                block: {},
-                workoutDate: '',
-                groupIndex: 0,
-                blockIndex: 0,
-              })}
-              block={editingBlock.block}
-              groupIndex={editingBlock.groupIndex}
-              blockIndex={editingBlock.blockIndex}
-              workoutDate={editingBlock.workoutDate}
-            />
+            {editingBlock.show && (
+              <BlockModal
+                show={editingBlock.show}
+                onHide={() => setEditingBlock({
+                  show: false,
+                  block: {},
+                  workoutDate: '',
+                  groupIndex: null,
+                  blockIndex: null,
+                })}
+                block={editingBlock.block}
+                groupIndex={editingBlock.groupIndex}
+                blockIndex={editingBlock.blockIndex}
+                workoutDate={editingBlock.workoutDate}
+              />
+            )}
           </Row>
         </CalendarContext.Provider>
       </Col>
@@ -231,7 +236,31 @@ const Calendar: React.FC = () => {
       const workoutToUpdate = updatedProgram.workouts.find(workout => workout.date === workoutDate);
 
       if (workoutToUpdate && workoutToUpdate.groups && workoutToUpdate.groups[groupIndex]) {
-        workoutToUpdate.groups[groupIndex].blocks.push({ title: 'New Block Title' });
+        workoutToUpdate.groups[groupIndex].blocks.push({
+          title: 'New Block Title',
+          exercises: [],
+          notes: '',
+        });
+      }
+
+      return updatedProgram;
+    });
+  };
+
+  function addWorkoutGroupBlockExercise(workoutDate: string, groupIndex: number, blockIndex: number) {
+    setProgram((prevProgram) => {
+      const updatedProgram = { ...prevProgram };
+      const workoutToUpdate = updatedProgram.workouts.find(workout => workout.date === workoutDate);
+
+      if (workoutToUpdate && workoutToUpdate.groups && workoutToUpdate.groups[groupIndex] && workoutToUpdate.groups[groupIndex].blocks && workoutToUpdate.groups[groupIndex].blocks[blockIndex]) {
+        workoutToUpdate.groups[groupIndex].blocks[blockIndex].exercises.push({
+          title: '',
+          category: '',
+          video: '',
+          sets: 0,
+          reps: 0,
+          rest: 0,
+        });
       }
 
       return updatedProgram;
@@ -260,6 +289,20 @@ const Calendar: React.FC = () => {
       if (workoutToUpdate && workoutToUpdate.groups && workoutToUpdate.groups[groupIndex]) {
         // Remove the block at the specified index
         workoutToUpdate.groups[groupIndex].blocks.splice(blockIndex, 1);
+      }
+
+      return updatedProgram;
+    });
+  };
+
+  function removeWorkoutGroupBlockExercise(workoutDate: string, groupIndex: number, blockIndex: number, exerciseIndex: number) {
+    setProgram(prevProgram => {
+      const updatedProgram = { ...prevProgram };
+      const workoutToUpdate = updatedProgram.workouts.find(workout => workout.date === workoutDate);
+
+      if (workoutToUpdate && workoutToUpdate.groups && workoutToUpdate.groups[groupIndex] && workoutToUpdate.groups[groupIndex].blocks && workoutToUpdate.groups[groupIndex].blocks[blockIndex]) {
+        // Remove the block at the specified index
+        workoutToUpdate.groups[groupIndex].blocks[blockIndex].exercises.splice(exerciseIndex, 1);
       }
 
       return updatedProgram;
@@ -335,6 +378,31 @@ const Calendar: React.FC = () => {
       return updatedProgram;
     });
   };
+
+  function moveGroupBlockExercise(workoutDate: string, groupIndex: number, blockIndex: number, fromIndex: number, toIndex: number) {
+    setProgram(prevProgram => {
+      const updatedProgram = { ...prevProgram };
+      const workoutToUpdateIndex = updatedProgram.workouts.findIndex(workout => workout.date === workoutDate);
+
+      if (workoutToUpdateIndex !== -1) {
+        const workoutToUpdate = updatedProgram.workouts[workoutToUpdateIndex];
+
+        // Determine the array to manipulate based on the object type
+        let arrayToUpdate = workoutToUpdate.groups[groupIndex].blocks[blockIndex].exercises;
+
+        // Ensure the array to manipulate is defined
+        if (arrayToUpdate) {
+          // Remove the object from its current position
+          const [objectToMove] = arrayToUpdate.splice(fromIndex, 1);
+          // Insert the object into the new position
+          arrayToUpdate.splice(toIndex, 0, objectToMove);
+        }
+      }
+
+      return updatedProgram;
+    });
+  };
+
 
   // fields handling
   function updateWorkoutField(field: string, newValue: any, workoutDate: string) {

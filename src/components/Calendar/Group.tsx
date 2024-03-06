@@ -117,10 +117,8 @@ const Group: React.FC<{ group: any; groupIndex: number; workoutDate: string }> =
             </SortableContext>
             <DragOverlay>
               {activeIndex && (
-                <Typography>
-                  <Block block={group.blocks[activeIndex]} groupIndex={groupIndex} blockIndex={activeIndex}
-                         workoutDate={workoutDate}/>
-                </Typography>
+                <Block block={group.blocks[activeIndex]} groupIndex={groupIndex} blockIndex={activeIndex}
+                       workoutDate={workoutDate}/>
               )}
             </DragOverlay>
           </DndContext>
