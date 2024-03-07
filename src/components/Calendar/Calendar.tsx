@@ -99,7 +99,6 @@ const Calendar: React.FC<{ data: any, date: Dayjs }> = ({ data, date }) => {
     },
   } = theme.useToken();
 
-
   // program
   const [workouts, setWorkouts] = useState([]);
 
